@@ -1,11 +1,13 @@
 import 'package:absensimagang/route/page.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'views/auth/login_page.dart';
 import 'views/auth/register_page.dart';
 import 'package:get/get.dart';
 
 void main () async {
+  initializeDateFormatting('id', null);
   await GetStorage.init();
   runApp(MyApp());
 }
@@ -16,6 +18,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Natusi Login/Registration',
+      locale: Locale('id','ID'),
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

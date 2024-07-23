@@ -1,6 +1,6 @@
 import 'package:absensimagang/route/page.dart';
 import 'package:absensimagang/views/dashboard/dashboardcopy.dart';
-import 'package:absensimagang/views/dashboard/dashboard.dart';
+import 'package:absensimagang/views/dashboard/home.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

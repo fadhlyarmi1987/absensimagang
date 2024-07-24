@@ -98,7 +98,7 @@ class DashboardPage extends GetView<DashboardController> {
         hideNavigationBarWhenKeyboardAppears: true,
         //popBehaviorOnSelectedNavBarItemPress: PopActionScreensType.all,
         padding: const EdgeInsets.only(top: 8),
-        backgroundColor: Color.fromARGB(255, 209, 223, 228),
+        backgroundColor: Color.fromARGB(255, 214, 214, 214),
         isVisible: true,
         animationSettings: const NavBarAnimationSettings(
           navBarItemAnimation: ItemAnimationSettings(

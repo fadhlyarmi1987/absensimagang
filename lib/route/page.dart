@@ -19,7 +19,9 @@ List <GetPage> pages=[
   GetPage(
     name: Routes.register, 
     page: () => RegisterPage(),
-    binding: AuthBinding()
+    binding: AuthBinding(),
+    transition: Transition.cupertinoDialog,
+    transitionDuration: Duration(milliseconds: 800),
   ),
   GetPage(
     name: Routes.dahsboard, 

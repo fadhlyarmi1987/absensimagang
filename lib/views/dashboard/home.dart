@@ -6,6 +6,8 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import '../modal/maps_modal.dart';
+
 class HomePage extends GetView<DashboardController> {
   const HomePage({super.key});
 
@@ -31,7 +33,7 @@ class HomePage extends GetView<DashboardController> {
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(top: 0.0, right: 305.0),
+                    padding: const EdgeInsets.only(top: 0.0, right: 260.0),
                     child: Card(
                       color: Color.fromARGB(255, 255, 255, 255),
                       shape: RoundedRectangleBorder(
@@ -42,7 +44,7 @@ class HomePage extends GetView<DashboardController> {
                       ),
                       child: SizedBox(
                         height: 45,
-                        width: 100,
+                        width: 150,
                         child: Image.asset("assets/Logo_Natusi.png"),
                       ),
                     ),
@@ -58,7 +60,7 @@ class HomePage extends GetView<DashboardController> {
                           'Now',
                           style: GoogleFonts.roboto(
                             fontWeight: FontWeight.normal,
-                            fontSize: 25,
+                            fontSize: 20,
                             color: Colors.white,
                             height: 1.2,
                           ),
@@ -70,7 +72,8 @@ class HomePage extends GetView<DashboardController> {
                             var formattedTime =
                                 DateFormat('HH:mm:ss').format(now);
                             var formattedDate =
-                                DateFormat('EEEE, dd MMMM yyyy', 'id').format(now);
+                                DateFormat('EEEE, dd MMMM yyyy', 'id')
+                                    .format(now);
 
                             return Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -82,17 +85,18 @@ class HomePage extends GetView<DashboardController> {
                                       color:
                                           Color.fromARGB(255, 255, 255, 255)),
                                 ),
-                                SizedBox(height: 20),
+                                SizedBox(height: 1),
                                 Text(
                                   formattedDate,
                                   style: TextStyle(
-                                      fontSize: 20, color: const Color.fromARGB(255, 255, 255, 255)),
+                                      fontSize: 20,
+                                      color: const Color.fromARGB(
+                                          255, 255, 255, 255)),
                                 ),
                               ],
                             );
                           },
                         ),
-                        
                       ],
                     ),
                   ),
@@ -134,9 +138,16 @@ class HomePage extends GetView<DashboardController> {
                                 ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.green),
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return MapPage();
+                                      },
+                                    );
+                                  },
                                   child: Text(
-                                    'Ceck-In',
+                                    'Check-In',
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 ),
@@ -181,7 +192,7 @@ class HomePage extends GetView<DashboardController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.all(16.0),
+                        padding: const EdgeInsets.all(10.0),
                         child: Text(
                           'Recent Attendance',
                           style: GoogleFonts.roboto(

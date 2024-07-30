@@ -10,6 +10,7 @@ class DashboardBinding implements Bindings {
 }
 
 class DashboardController extends GetxController {
+
   final Storage _storage = Storage();
   void logout() {
     _storage.logout();
@@ -36,6 +37,11 @@ class DashboardController extends GetxController {
       'date': 'Senin, 15 Juli 2024',
       'checkIn': '07.45',
       'checkOut': '17.10',
+    },
+    {
+      'date': 'Jumat, 12 Juli 2024',
+      'checkIn': '07.45',
+      'checkOut': '17.20',
     },
   ].obs;
 }

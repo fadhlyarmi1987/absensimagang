@@ -2,7 +2,6 @@ import 'package:absensimagang/views/auth/auth.controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../route/page.dart';
-import 'login_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class RegisterPage extends GetView<AuthController> {
@@ -30,10 +29,43 @@ class RegisterPage extends GetView<AuthController> {
                           fontSize: 30,
                           fontWeight: FontWeight.bold))),
               SizedBox(height: 20),
-              CustomTextField(label: 'Nama', controller: controller.controllerNama),
-              CustomTextField(label: 'Email/Username', controller: controller.controllerEmail),
-              CustomTextField(label: 'Password', obscureText: true, controller: controller.controllerPassword),
-              CustomTextField(label: 'Confirm Password', obscureText: true, controller: controller.controllerCPassword),
+              CustomTextField(
+                  label: 'Nama', controller: controller.controllerNama),
+              CustomTextField(
+                  label: 'Email/Username',
+                  controller: controller.controllerEmail),
+              CustomTextField(
+                  label: 'Password',
+                  obscureText: true,
+                  controller: controller.controllerPassword),
+              CustomTextField(
+                  label: 'Confirm Password',
+                  obscureText: true,
+                  controller: controller.controllerCPassword),
+
+
+              Obx(() => CheckboxListTile(
+                    title: Text('Saya Karyawan',
+                        style: TextStyle(color: Colors.white)),
+                    value: controller.isKaryawan.value,
+                    onChanged: (value) {
+                      controller.isKaryawan.value = value!;
+                      if (value) controller.isMagang.value = false;
+                    },
+                    activeColor: Colors.green,
+                    checkColor: Colors.white,
+                  )),
+              Obx(() => CheckboxListTile(
+                    title: Text('Saya Magang',
+                        style: TextStyle(color: Colors.white)),
+                    value: controller.isMagang.value,
+                    onChanged: (value) {
+                      controller.isMagang.value = value!;
+                      if (value) controller.isKaryawan.value = false;
+                    },
+                    activeColor: Colors.green,
+                    checkColor: Colors.white,
+                  )),
 
               SizedBox(height: 20),
               GestureDetector(
@@ -46,7 +78,8 @@ class RegisterPage extends GetView<AuthController> {
                     borderRadius: BorderRadius.circular(100),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.3),
+                        color:
+                            const Color.fromARGB(255, 0, 0, 0).withOpacity(0.3),
                         spreadRadius: 1,
                         blurRadius: 5,
                         offset: Offset(0, 3),

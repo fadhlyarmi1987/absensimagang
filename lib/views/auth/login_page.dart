@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'register_page.dart';
 
 class LoginPage extends GetView<AuthController> {
   LoginPage({Key? key}) : super(key: key);

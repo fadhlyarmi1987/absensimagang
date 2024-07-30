@@ -1,11 +1,10 @@
-import 'package:absensimagang/views/dashboard/dashboard.controller.dart';
-import 'package:absensimagang/views/dashboard/dashboard.dart';
+import 'dashboard.controller.dart';
+import 'dashboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-
 import '../modal/maps_modal.dart';
 
 class HomePage extends GetView<DashboardController> {
@@ -258,17 +257,6 @@ class HomePage extends GetView<DashboardController> {
                   ),
                 ),
               ),
-            ),
-          ),
-          Positioned(
-            top: 700, // Sesuaikan posisi top sesuai kebutuhan
-            left: 150,
-            right: 150,
-            child: ElevatedButton(
-              onPressed: () {
-                controller.logout;
-              },
-              child: Text('Keluar'),
             ),
           ),
         ]),

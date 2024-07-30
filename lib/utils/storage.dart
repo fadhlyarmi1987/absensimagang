@@ -7,5 +7,7 @@ class Storage {
   bool isLogin() => _storage.read<bool>("isLogin") ?? false;
 
   void logout() => _storage.remove('isLogin');
+
+  
   
 }

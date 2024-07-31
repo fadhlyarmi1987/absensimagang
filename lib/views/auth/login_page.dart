@@ -48,7 +48,10 @@ class LoginPage extends GetView<AuthController> {
                 ),
                 SizedBox(height: 20),
                 GestureDetector(
-                  onTap: () => controller.login(),
+                  onTap: () {
+                    controller.login();
+                    controller.loginApi();
+                  },
                   child: Container(
                     width: 100,
                     height: 50,

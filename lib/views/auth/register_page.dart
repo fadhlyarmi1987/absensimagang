@@ -70,7 +70,7 @@ class RegisterPage extends GetView<AuthController> {
               SizedBox(height: 20),
               GestureDetector(
                 onTap: () {
-                  controller.register();
+                  //controller.register();
                   controller.registerApi();
                 },
                 child: Container(

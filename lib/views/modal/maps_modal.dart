@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart'; // Import paket lokasi
-import 'map.controller.dart'; // Import controller
+import 'map.controller.dart'; // Import the controller
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -15,36 +14,7 @@ class _MapPageState extends State<MapPage> {
   late GoogleMapController mapController;
   String selectedOffice = '';
   final LatLng _center = const LatLng(-7.491926, 112.456411); // Koordinat Jakarta
-  final MapController mapControllerInstance = MapController(); // Instance controller
-  Location location = Location(); // Instance Location
-  LatLng? currentLocation; // Untuk menyimpan lokasi pengguna saat ini
-
-  @override
-  void initState() {
-    super.initState();
-    _getCurrentLocation();
-    _addMarkers();
-  }
-
-  Future<void> _getCurrentLocation() async {
-    try {
-      LocationData locationData = await location.getLocation();
-      setState(() {
-        currentLocation = LatLng(locationData.latitude!, locationData.longitude!);
-        // Update posisi kamera jika lokasi pengguna berhasil didapatkan
-        mapController.animateCamera(
-          CameraUpdate.newCameraPosition(
-            CameraPosition(
-              target: currentLocation!,
-              zoom: 15.0,
-            ),
-          ),
-        );
-      });
-    } catch (e) {
-      print('Error getting location: $e');
-    }
-  }
+  final MapController mapControllerInstance = MapController(); // Controller instance
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -52,7 +22,7 @@ class _MapPageState extends State<MapPage> {
 
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
 
-  void _addMarkers() {
+  void _add() {
     final marker1 = Marker(
       markerId: MarkerId('Meri'),
       position: LatLng(-7.482906085307217, 112.44929725580936),
@@ -76,6 +46,12 @@ class _MapPageState extends State<MapPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _add();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -83,7 +59,7 @@ class _MapPageState extends State<MapPage> {
       ),
       body: GoogleMap(
         onMapCreated: _onMapCreated,
-        myLocationEnabled: true, // Menampilkan tombol lokasi saya
+        myLocationEnabled: true,
         markers: markers.values.toSet(),
         initialCameraPosition: CameraPosition(
           target: _center,
@@ -116,7 +92,7 @@ class _MapPageState extends State<MapPage> {
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius:
-                            BorderRadius.circular(10)), // Border radius input
+                            BorderRadius.circular(10)), //border radius input
                     filled: true,
                     fillColor: const Color.fromARGB(255, 232, 242, 251),
                   ),

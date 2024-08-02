@@ -43,6 +43,7 @@ dependencies:
   google_maps_flutter: ^2.2.8
   geolocator: ^11.0.0
   dio: ^5.5.0+1
+  location: ^6.0.2
 
 dev_dependencies:
   flutter_test:

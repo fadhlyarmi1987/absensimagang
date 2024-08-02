@@ -17,10 +17,10 @@ class ProfilePage extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                 gradient: RadialGradient(
-                  center: Alignment(0, -1.3),
-                  stops: [50, 50],
-                  radius: 0.75,
-                  colors: [Colors.white, const Color.fromARGB(255, 14, 142, 197)],
+                  center: Alignment(0, -1),
+                  stops: [0.3, 0.7],
+                  radius: 1.5,
+                  colors: [Color.fromARGB(255, 237, 234, 234), const Color.fromARGB(255, 14, 142, 197)],
                 ),
               ),
             ),

@@ -1,9 +1,8 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart'; // Import paket lokasi
+import 'map.controller.dart'; // Import controller
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -14,9 +13,38 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   late GoogleMapController mapController;
+  String selectedOffice = '';
+  final LatLng _center = const LatLng(-7.491926, 112.456411); // Koordinat Jakarta
+  final MapController mapControllerInstance = MapController(); // Instance controller
+  Location location = Location(); // Instance Location
+  LatLng? currentLocation; // Untuk menyimpan lokasi pengguna saat ini
 
-  final LatLng _center =
-      const LatLng(-7.491926, 112.456411); // Koordinat Jakarta
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+    _addMarkers();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    try {
+      LocationData locationData = await location.getLocation();
+      setState(() {
+        currentLocation = LatLng(locationData.latitude!, locationData.longitude!);
+        // Update posisi kamera jika lokasi pengguna berhasil didapatkan
+        mapController.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: currentLocation!,
+              zoom: 15.0,
+            ),
+          ),
+        );
+      });
+    } catch (e) {
+      print('Error getting location: $e');
+    }
+  }
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -24,31 +52,27 @@ class _MapPageState extends State<MapPage> {
 
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
 
-  void _add() {
+  void _addMarkers() {
     final marker1 = Marker(
-        markerId: MarkerId('Meri'),
-        position: LatLng(-7.482906085307217, 112.44929725580936),
-        onTap: () {
-          _showModalBottomSheet(context);
-        });
+      markerId: MarkerId('Meri'),
+      position: LatLng(-7.482906085307217, 112.44929725580936),
+      onTap: () {
+        _showModalBottomSheet(context, 'Kantor Meri');
+      },
+    );
 
     final marker2 = Marker(
-        markerId: MarkerId('Graha'),
-        position: LatLng(-7.491750, 112.461981),
-        onTap: () {
-          _showModalBottomSheet(context);
-        });
+      markerId: MarkerId('Graha'),
+      position: LatLng(-7.491750, 112.461981),
+      onTap: () {
+        _showModalBottomSheet(context, 'Kantor Graha');
+      },
+    );
 
     setState(() {
       markers[MarkerId('Meri')] = marker1;
       markers[MarkerId('Graha')] = marker2;
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _add();
   }
 
   @override
@@ -59,7 +83,7 @@ class _MapPageState extends State<MapPage> {
       ),
       body: GoogleMap(
         onMapCreated: _onMapCreated,
-        myLocationEnabled: true,
+        myLocationEnabled: true, // Menampilkan tombol lokasi saya
         markers: markers.values.toSet(),
         initialCameraPosition: CameraPosition(
           target: _center,
@@ -69,7 +93,7 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-  void _showModalBottomSheet(BuildContext context) {
+  void _showModalBottomSheet(BuildContext context, String officeName) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -91,29 +115,26 @@ class _MapPageState extends State<MapPage> {
                 child: DropdownButtonFormField<String>(
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)), //border raidius input
+                        borderRadius:
+                            BorderRadius.circular(10)), // Border radius input
                     filled: true,
                     fillColor: const Color.fromARGB(255, 232, 242, 251),
                   ),
                   borderRadius: BorderRadius.circular(10),
-                
                   hint: Text('Nama Kantor'),
+                  value: officeName,
                   items: [
                     DropdownMenuItem(
                       value: 'Kantor Meri',
                       child: Center(
                         child: Container(
-                          decoration: BoxDecoration(
-                            
-                            border: Border(
-                              
-                              bottom: BorderSide(
-                                color: Colors.grey.shade300,
-                                width: 1,
-                              )
-                            )
-                          ),
-                          child: Text('Kantor Meri')),
+                            decoration: BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(
+                              color: Colors.grey.shade300,
+                              width: 1,
+                            ))),
+                            child: Text('Kantor Meri')),
                       ),
                     ),
                     DropdownMenuItem(
@@ -134,11 +155,15 @@ class _MapPageState extends State<MapPage> {
                     ),
                   ],
                   onChanged: (value) {
+                    setState(() {
+                      selectedOffice = value!;
+                    });
                     if (value == 'Kantor Meri') {
                       mapController.animateCamera(
                         CameraUpdate.newCameraPosition(
                           CameraPosition(
-                            target: LatLng(-7.482906085307217, 112.44929725580936),
+                            target:
+                                LatLng(-7.482906085307217, 112.44929725580936),
                             zoom: 17.0,
                           ),
                         ),
@@ -187,7 +212,19 @@ class _MapPageState extends State<MapPage> {
                               color: Colors.white),
                         ),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
+                        final message = await mapControllerInstance.sendAttendanceData(
+                          userid: 'user123',
+                          typetime: 'checkin',
+                          time: DateTime.now().toIso8601String(),
+                          latitude: selectedOffice == 'Kantor Meri' ? -7.482906085307217 : -7.491750,
+                          longitude: selectedOffice == 'Kantor Meri' ? 112.44929725580936 : 112.461981,
+                          kantorid: selectedOffice == 'Kantor Meri' ? 1 : 2,
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(message)),
+                        );
+                        Navigator.pop(context); // Menutup modal bottom sheet setelah data dikirim
                       },
                     ),
                   ),

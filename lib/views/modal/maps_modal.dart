@@ -1,4 +1,8 @@
+import 'package:absensimagang/data/services/auth.service.dart';
+import 'package:absensimagang/model/attended.dart';
+import 'package:absensimagang/views/modal/map.controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'map.controller.dart'; // Import the controller
@@ -11,10 +15,13 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
+  AuthService service = AuthService();
   late GoogleMapController mapController;
   String selectedOffice = '';
   final LatLng _center = const LatLng(-7.491926, 112.456411); // Koordinat Jakarta
   final MapController mapControllerInstance = MapController(); // Controller instance
+
+  MapController controller = MapController();
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -45,6 +52,8 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
+  
+
   @override
   void initState() {
     super.initState();
@@ -60,11 +69,18 @@ class _MapPageState extends State<MapPage> {
       body: GoogleMap(
         onMapCreated: _onMapCreated,
         myLocationEnabled: true,
+        myLocationButtonEnabled: true,
         markers: markers.values.toSet(),
         initialCameraPosition: CameraPosition(
           target: _center,
           zoom: 15.0,
         ),
+        // circles: {
+    
+        //   Circle(
+        //     circleId:radiusOffice() ,
+        //     radius: 50)
+        // },
       ),
     );
   }
@@ -189,17 +205,18 @@ class _MapPageState extends State<MapPage> {
                         ),
                       ),
                       onPressed: () async {
-                        final message = await mapControllerInstance.sendAttendanceData(
-                          userid: 'user123',
-                          typetime: 'checkin',
-                          time: DateTime.now().toIso8601String(),
-                          latitude: selectedOffice == 'Kantor Meri' ? -7.482906085307217 : -7.491750,
-                          longitude: selectedOffice == 'Kantor Meri' ? 112.44929725580936 : 112.461981,
-                          kantorid: selectedOffice == 'Kantor Meri' ? 1 : 2,
-                        );
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(message)),
-                        );
+                        radiusOffice();
+                        // final message = await mapControllerInstance.sendAttendanceData(
+                        //   userid: 'user123',
+                        //   typetime: 'checkin',
+                        //   time: DateTime.now().toIso8601String(),
+                        //   latitude: selectedOffice == 'Kantor Meri' ? -7.482906085307217 : -7.491750,
+                        //   longitude: selectedOffice == 'Kantor Meri' ? 112.44929725580936 : 112.461981,
+                        //   kantorid: selectedOffice == 'Kantor Meri' ? 1 : 2,
+                        // );
+                        // ScaffoldMessenger.of(context).showSnackBar(
+                        //   SnackBar(content: Text(message)),
+                        // );
                         Navigator.pop(context); // Menutup modal bottom sheet setelah data dikirim
                       },
                     ),
@@ -212,4 +229,17 @@ class _MapPageState extends State<MapPage> {
       },
     );
   }
+
+  int circle = 1;
+int radius = 50;
+
+void radiusOffice() {
+  if (circle <= radius) {
+    print('dekat');
+  } else {
+    AlertDialog(
+      actions: [],
+      content: Column(children: [Text('upsss')],),);
+  }
+}
 }

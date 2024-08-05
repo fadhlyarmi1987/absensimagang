@@ -36,39 +36,35 @@ class DashboardController extends GetxController {
       if (response.statusCode == 200) {
         List<dynamic> data = response.data;
 
-        // Mengelompokkan data berdasarkan userid dan memilih entri check-in dan check-out terbaru
         Map<String, Map<String, dynamic>> groupedData = {};
 
         for (var item in data) {
-          String userid = item['userid'];
           String typetime = item['typetime'];
           DateTime time = DateTime.parse(item['time']);
+          String dateKey = DateFormat('yyyy-MM-dd').format(time);
 
-          if (!groupedData.containsKey(userid)) {
-            groupedData[userid] = {'check-in': null, 'check-out': null};
+          if (!groupedData.containsKey(dateKey)) {
+            groupedData[dateKey] = {'date': dateKey, 'check-in': null, 'check-out': null};
           }
 
-          if (typetime == 'checkin') {
-            if (groupedData[userid]!['checkin'] == null ||
+          if (typetime == 'checkin') { 
+            if (groupedData[dateKey]!['check-in'] == null ||
                 time.isAfter(
-                    DateTime.parse(groupedData[userid]!['checkin']['time']))) {
-              groupedData[userid]!['check-in'] = item;
+                    DateTime.parse(groupedData[dateKey]!['check-in']['time']))) {
+              groupedData[dateKey]!['check-in'] = item;
             }
-          } else if (typetime == 'checkout') {
-            if (groupedData[userid]!['checkout'] == null ||
+          } else if (typetime == 'checkout') { 
+            if (groupedData[dateKey]!['check-out'] == null ||
                 time.isAfter(
-                    DateTime.parse(groupedData[userid]!['checkout']['time']))) {
-              groupedData[userid]!['check-out'] = item;
+                    DateTime.parse(groupedData[dateKey]!['check-out']['time']))) {
+              groupedData[dateKey]!['check-out'] = item;
             }
           }
         }
 
-        // Mengonversi hasil pengelompokan menjadi daftar
         List<Map<String, dynamic>> attendanceList =
             groupedData.values.map((entry) {
-          DateTime date = entry['check-in'] != null
-              ? DateTime.parse(entry['check-in']['time'])
-              : DateTime.parse(entry['check-out']['time']);
+          DateTime date = DateTime.parse(entry['date']);
 
           return {
             'date': DateFormat('EEEE, dd MMMM yyyy', 'id').format(date),
@@ -83,7 +79,6 @@ class DashboardController extends GetxController {
           };
         }).toList();
 
-        // Mengurutkan data berdasarkan tanggal terbaru di bagian paling atas
         attendanceList.sort((a, b) {
           DateTime dateA =
               DateFormat('EEEE, dd MMMM yyyy', 'id').parse(a['date']);
@@ -94,11 +89,9 @@ class DashboardController extends GetxController {
 
         listhadir.value = attendanceList;
       } else {
-        // Menangani respons error
         print('Failed to load attendance data');
       }
     } catch (e) {
-      // Menangani exception
       print('Exception occurred: $e');
     }
   }

@@ -20,7 +20,7 @@ class ProfilePage extends StatelessWidget {
                   center: Alignment(0, -1),
                   stops: [0.3, 0.7],
                   radius: 1.5,
-                  colors: [Color.fromARGB(255, 237, 234, 234), const Color.fromARGB(255, 14, 142, 197)],
+                  colors: [Color.fromARGB(255, 193, 188, 188), const Color.fromARGB(255, 14, 142, 197)],
                 ),
               ),
             ),

@@ -1,7 +1,7 @@
 class ApiConstants {
   ApiConstants._();
   
-  static const String baseUrl = "http://192.168.100.46:8000/api/";
+  static const String baseUrl = "http://192.168.64.139:8001/api/";
 
   //"http://192.168.64.139:8000/api/"; hotspot
   //"http://192.168.2.91:8000/api/"; wifikantor
@@ -10,4 +10,5 @@ class ApiConstants {
   static const String login  = "login";
   static const String register = "register";
   static const String listabsen = "listabsen";
+  static const String absen = "absen";
 }

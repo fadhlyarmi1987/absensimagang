@@ -82,162 +82,200 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-  void _showModalBottomSheet(BuildContext context, String officeName) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          height: 200,
-          color: Colors.white,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.fromLTRB(40, 20, 50, 0),
-                child: Text(
-                  'Pilih Lokasi Kantor',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
+void _showModalBottomSheet(BuildContext context, String officeName) {
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext context) {
+      return Container(
+        height: 200,
+        color: Colors.white,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(40, 20, 50, 0),
+              child: Text(
+                'Pilih Lokasi Kantor',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(40, 0, 40, 10),
-                child: DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(10)), //border radius input
-                    filled: true,
-                    fillColor: const Color.fromARGB(255, 232, 242, 251),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(40, 0, 40, 10),
+              child: DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                      borderRadius:
+                          BorderRadius.circular(10)), //border radius input
+                  filled: true,
+                  fillColor: const Color.fromARGB(255, 232, 242, 251),
+                ),
+                borderRadius: BorderRadius.circular(10),
+                hint: Text('Nama Kantor'),
+                value: officeName,
+                items: [
+                  DropdownMenuItem(
+                    value: 'Kantor Meri',
+                    child: Center(
+                      child: Container(
+                          decoration: BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(
+                            color: Colors.grey.shade300,
+                            width: 1,
+                          ))),
+                          child: Text('Kantor Meri')),
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(10),
-                  hint: Text('Nama Kantor'),
-                  value: officeName,
-                  items: [
-                    DropdownMenuItem(
-                      value: 'Kantor Meri',
-                      child: Center(
-                        child: Container(
-                            decoration: BoxDecoration(
-                                border: Border(
-                                    bottom: BorderSide(
+                  DropdownMenuItem(
+                    value: 'Kantor Graha',
+                    child: Center(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
                               color: Colors.grey.shade300,
                               width: 1,
-                            ))),
-                            child: Text('Kantor Meri')),
-                      ),
-                    ),
-                    DropdownMenuItem(
-                      value: 'Kantor Graha',
-                      child: Center(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                color: Colors.grey.shade300,
-                                width: 1,
-                              ),
                             ),
                           ),
-                          child: Text('Kantor Graha'),
                         ),
+                        child: Text('Kantor Graha'),
                       ),
                     ),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      selectedOffice = value!;
-                    });
-                    if (value == 'Kantor Meri') {
-                      mapController.animateCamera(
-                        CameraUpdate.newCameraPosition(
-                          CameraPosition(
-                            target:
-                                LatLng(-7.482906085307217, 112.44929725580936),
-                            zoom: 17.0,
-                          ),
+                  ),
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    selectedOffice = value!;
+                  });
+                  if (value == 'Kantor Meri') {
+                    mapController.animateCamera(
+                      CameraUpdate.newCameraPosition(
+                        CameraPosition(
+                          target:
+                              LatLng(-7.482906085307217, 112.44929725580936),
+                          zoom: 17.0,
                         ),
-                      );
-                    } else if (value == 'Kantor Graha') {
-                      mapController.animateCamera(
-                        CameraUpdate.newCameraPosition(
-                          CameraPosition(
-                            target: LatLng(-7.491750, 112.461981),
-                            zoom: 17.0,
-                          ),
+                      ),
+                    );
+                  } else if (value == 'Kantor Graha') {
+                    mapController.animateCamera(
+                      CameraUpdate.newCameraPosition(
+                        CameraPosition(
+                          target: LatLng(-7.491750, 112.461981),
+                          zoom: 17.0,
                         ),
-                      );
-                    }
-                  },
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(40, 0, 40, 0),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color.fromARGB(255, 18, 173, 164),
+                      Colors.blue
+                    ], // Warna gradien
+                  ),
+                  borderRadius: BorderRadius.circular(12), // Border radius
+                ),
+                child: Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10))),
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(100, 15, 100, 15),
+                      child: Text(
+                        'Selanjutnya',
+                        style: GoogleFonts.content(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            color: Colors.white),
+                      ),
+                    ),
+                    onPressed: () async {
+                      Navigator.pop(context); // Menutup modal bottom sheet
+                      if (selectedOffice == 'Kantor Meri') {
+                        await _sendDataToDatabaseMeri(context);
+                      } else if (selectedOffice == 'Kantor Graha') {
+                        await _sendDataToDatabaseGraha(context);
+                      }
+                    },
+                  ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(40, 0, 40, 0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Color.fromARGB(255, 18, 173, 164),
-                        Colors.blue
-                      ], // Warna gradien
-                    ),
-                    borderRadius: BorderRadius.circular(12), // Border radius
-                  ),
-                  child: Center(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10))),
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(100, 15, 100, 15),
-                        child: Text(
-                          'Selanjutnya',
-                          style: GoogleFonts.content(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                              color: Colors.white),
-                        ),
-                      ),
-                      onPressed: () async {
-                        Navigator.pop(context); // Menutup modal bottom sheet setelah data dikirim
-                        await _sendDataToDatabase(context);
-                      },
-                    ),
-                  ),
-                ),
-              )
-            ],
-          ),
-        );
-      },
-    );
-  }
+            )
+          ],
+        ),
+      );
+    },
+  );
+}
 
-  Future<void> _sendDataToDatabase(BuildContext context) async {
-    String? currentUserName = await Storage().getName(); 
+
+  Future<void> _sendDataToDatabaseMeri(BuildContext context) async {
+    String? currentName = await Storage().getName(); 
     LatLng officeMeriPosition = LatLng(-7.482906085307217, 112.44929725580936);
     HttpClient httpClient = HttpClient();
+    
 
     final dio = Dio();
-    final String apiUrl = ApiConstants.baseUrl;
+    final String apiUrl = 'http://192.168.64.139:8001/api/absen'; // Ganti dengan URL API yang sesuai
+
 
     try {
       var response = await httpClient.post(apiUrl, data: {
-        'name': 'flt7', //currentUserName,
+        'name': currentName,
         'typetime': 'checkin',
-        'latitude': '8372893',//officeMeriPosition.latitude,
-        'longitude': '26131746',//officeMeriPosition.longitude,
+        'latitude': officeMeriPosition.latitude,
+        'longitude': officeMeriPosition.longitude,
         'kantorid' : 'Meri'
+        
+        
+      });
+
+      if (response.statusCode != 200) {
+        print('Data berhasil dikirim ke database');
+        _showSuccessDialog(context, currentName??"", officeMeriPosition);
+      } else {
+        print('Gagal mengirim data ke database');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+    Future<void> _sendDataToDatabaseGraha(BuildContext context) async {
+    String? currentName = await Storage().getName(); 
+    LatLng officeGrahaPosition = LatLng(-7.491750, 112.461981);
+    HttpClient httpClient = HttpClient();
+
+    final dio = Dio();
+    final String apiUrl = 'http://192.168.64.139:8001/api/absen'; // Ganti dengan URL API yang sesuai
+
+
+    try {
+      var response = await httpClient.post(apiUrl, data: {
+        'name': currentName,
+        'typetime': 'checkin',
+        'latitude': officeGrahaPosition.latitude,
+        'longitude': officeGrahaPosition.longitude,
+        'kantorid' : 'Graha'
         
         
       });
 
       if (response.statusCode == 200) {
         print('Data berhasil dikirim ke database');
-        _showSuccessDialog(context, currentUserName??"", officeMeriPosition);
+        _showSuccessDialog(context, currentName??"", officeGrahaPosition);
       } else {
         print('Gagal mengirim data ke database');
       }

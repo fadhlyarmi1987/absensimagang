@@ -44,7 +44,7 @@ class DashboardController extends GetxController {
 
         for (var item in data) {
           String typetime = item['typetime'];
-          DateTime time = DateTime.parse(item['time']);
+          DateTime time = DateTime.parse(item['created_at']);
           String dateKey = DateFormat('yyyy-MM-dd').format(time);
 
           if (!groupedData.containsKey(dateKey)) {
@@ -54,13 +54,13 @@ class DashboardController extends GetxController {
           if (typetime == 'checkin') { 
             if (groupedData[dateKey]!['check-in'] == null ||
                 time.isAfter(
-                    DateTime.parse(groupedData[dateKey]!['check-in']['time']))) {
+                    DateTime.parse(groupedData[dateKey]!['check-in']['created_at']))) {
               groupedData[dateKey]!['check-in'] = item;
             }
           } else if (typetime == 'checkout') { 
             if (groupedData[dateKey]!['check-out'] == null ||
                 time.isAfter(
-                    DateTime.parse(groupedData[dateKey]!['check-out']['time']))) {
+                    DateTime.parse(groupedData[dateKey]!['check-out']['created_at']))) {
               groupedData[dateKey]!['check-out'] = item;
             }
           }
@@ -74,11 +74,11 @@ class DashboardController extends GetxController {
             'date': DateFormat('EEEE, dd MMMM yyyy', 'id').format(date),
             'checkIn': entry['check-in'] != null
                 ? DateFormat('HH:mm')
-                    .format(DateTime.parse(entry['check-in']['time']))
+                    .format(DateTime.parse(entry['check-in']['created_at']))
                 : '',
             'checkOut': entry['check-out'] != null
                 ? DateFormat('HH:mm')
-                    .format(DateTime.parse(entry['check-out']['time']))
+                    .format(DateTime.parse(entry['check-out']['created_at']))
                 : '',
           };
         }).toList();

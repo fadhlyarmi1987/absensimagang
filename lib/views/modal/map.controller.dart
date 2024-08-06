@@ -7,6 +7,7 @@ class MapController {
 
   Future<String> sendAttendanceData({
     required String userid,
+    required String name,
     required String typetime,
     required String time,
     required double latitude,
@@ -16,6 +17,7 @@ class MapController {
     try {
       Map<String, dynamic> data = {
         'userid': userid,
+        'name' : name,
         'typetime': typetime,
         'time': time,
         'latitude': latitude,

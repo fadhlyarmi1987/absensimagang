@@ -13,6 +13,6 @@ class Storage {
 
   void logout() {
     _storage.remove('isLogin');
-    _storage.remove('name'); // Menghapus nama saat logout (opsional)
+    _storage.remove('name'); 
   }
 }

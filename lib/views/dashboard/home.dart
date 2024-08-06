@@ -1,3 +1,5 @@
+import 'package:get_storage/get_storage.dart';
+
 import '../modal/maps_modal.dart';
 import 'dashboard.controller.dart';
 import 'package:flutter/material.dart';
@@ -108,13 +110,32 @@ class HomePage extends GetView<DashboardController> {
                   alignment: Alignment.topRight,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'Hai, selamat datang ${controller.name.value}',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                    child: Column(
+                      children: [
+                        Container(
+                          //color: Colors.blue,
+                          width: 150,
+                          child: Text(
+                            'Hai,',
+                            style: GoogleFonts.lobster(
+                              fontSize: 15,
+                              color: Colors.white
+                            ),
+                            textAlign: TextAlign.right,
+                          ),
+                        ),
+                        Container(
+                          width: 150,
+                          //color: Colors.black,
+                          child: Text('${controller.name.value}',
+                          style: GoogleFonts.lobster(
+                            fontSize: 20,
+                            color: Colors.white
+                          ),
+                          textAlign: TextAlign.right,
+                          ),
+                        )
+                      ],
                     ),
                   ),
                 );

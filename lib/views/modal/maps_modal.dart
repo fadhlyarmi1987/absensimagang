@@ -1,10 +1,13 @@
 import 'package:absensimagang/data/services/auth.service.dart';
-import 'package:absensimagang/model/attended.dart';
+import 'package:absensimagang/utils/api_constants.dart';
+import 'package:absensimagang/utils/storage.dart'; // Import storage.dart
 import 'package:absensimagang/views/modal/map.controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:dio/dio.dart'; // Import dio
+import '../../data/providers/api.provider.dart';
 import 'map.controller.dart'; // Import the controller
 
 class MapPage extends StatefulWidget {
@@ -18,8 +21,10 @@ class _MapPageState extends State<MapPage> {
   AuthService service = AuthService();
   late GoogleMapController mapController;
   String selectedOffice = '';
-  final LatLng _center = const LatLng(-7.491926, 112.456411); // Koordinat Jakarta
-  final MapController mapControllerInstance = MapController(); // Controller instance
+  final LatLng _center =
+      const LatLng(-7.491926, 112.456411); // Koordinat Jakarta
+  final MapController mapControllerInstance =
+      MapController(); // Controller instance
 
   MapController controller = MapController();
 
@@ -52,8 +57,6 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
-  
-
   @override
   void initState() {
     super.initState();
@@ -75,12 +78,6 @@ class _MapPageState extends State<MapPage> {
           target: _center,
           zoom: 15.0,
         ),
-        // circles: {
-    
-        //   Circle(
-        //     circleId:radiusOffice() ,
-        //     radius: 50)
-        // },
       ),
     );
   }
@@ -205,19 +202,8 @@ class _MapPageState extends State<MapPage> {
                         ),
                       ),
                       onPressed: () async {
-                        radiusOffice();
-                        // final message = await mapControllerInstance.sendAttendanceData(
-                        //   userid: 'user123',
-                        //   typetime: 'checkin',
-                        //   time: DateTime.now().toIso8601String(),
-                        //   latitude: selectedOffice == 'Kantor Meri' ? -7.482906085307217 : -7.491750,
-                        //   longitude: selectedOffice == 'Kantor Meri' ? 112.44929725580936 : 112.461981,
-                        //   kantorid: selectedOffice == 'Kantor Meri' ? 1 : 2,
-                        // );
-                        // ScaffoldMessenger.of(context).showSnackBar(
-                        //   SnackBar(content: Text(message)),
-                        // );
                         Navigator.pop(context); // Menutup modal bottom sheet setelah data dikirim
+                        await _sendDataToDatabase(context);
                       },
                     ),
                   ),
@@ -230,16 +216,62 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-  int circle = 1;
-int radius = 50;
+  Future<void> _sendDataToDatabase(BuildContext context) async {
+    String? currentUserName = await Storage().getName(); 
+    LatLng officeMeriPosition = LatLng(-7.482906085307217, 112.44929725580936);
+    HttpClient httpClient = HttpClient();
 
-void radiusOffice() {
-  if (circle <= radius) {
-    print('dekat');
-  } else {
-    AlertDialog(
-      actions: [],
-      content: Column(children: [Text('upsss')],),);
+    final dio = Dio();
+    final String apiUrl = ApiConstants.baseUrl;
+
+    try {
+      var response = await httpClient.post(apiUrl, data: {
+        'name': 'flt7', //currentUserName,
+        'typetime': 'checkin',
+        'latitude': '8372893',//officeMeriPosition.latitude,
+        'longitude': '26131746',//officeMeriPosition.longitude,
+        'kantorid' : 'Meri'
+        
+        
+      });
+
+      if (response.statusCode == 200) {
+        print('Data berhasil dikirim ke database');
+        _showSuccessDialog(context, currentUserName??"", officeMeriPosition);
+      } else {
+        print('Gagal mengirim data ke database');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
   }
-}
+
+  void _showSuccessDialog(BuildContext context, String name, LatLng position) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Informasi Kantor Meri'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text('Name: $name'),
+              Text('Longitude: ${position.longitude}'),
+              Text('Latitude: ${position.latitude}'),
+              Text('Type Time: Checkin'),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Tutup'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }

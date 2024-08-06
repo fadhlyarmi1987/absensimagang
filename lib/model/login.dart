@@ -1,6 +1,7 @@
 class Login{
   String? username;
   String? password;
+  String? Name;
 
   Login({
     this.username, this.password
@@ -16,6 +17,7 @@ class Login{
     return{
       'username': username,
       'password': password,
+      'Name' : Name,
     };
   }
 }

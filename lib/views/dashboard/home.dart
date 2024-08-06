@@ -78,14 +78,16 @@ class HomePage extends GetView<DashboardController> {
                                     formattedTime,
                                     style: TextStyle(
                                         fontSize: 50,
-                                        color: Color.fromARGB(255, 255, 255, 255)),
+                                        color:
+                                            Color.fromARGB(255, 255, 255, 255)),
                                   ),
                                   SizedBox(height: 1),
                                   Text(
                                     formattedDate,
                                     style: TextStyle(
                                         fontSize: 20,
-                                        color: const Color.fromARGB(255, 255, 255, 255)),
+                                        color: const Color.fromARGB(
+                                            255, 255, 255, 255)),
                                   ),
                                 ],
                               );
@@ -97,6 +99,26 @@ class HomePage extends GetView<DashboardController> {
                   ],
                 ),
               ),
+            ),
+            Positioned(
+              top: 10,
+              right: 10,
+              child: Obx(() {
+                return Align(
+                  alignment: Alignment.topRight,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Hai, selamat datang ${controller.name.value}',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                );
+              }),
             ),
             Positioned(
               top: 210,

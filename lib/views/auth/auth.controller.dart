@@ -25,9 +25,6 @@ class AuthController extends GetxController {
   var isKaryawan = false.obs;
   var isMagang = false.obs;
 
-  final String staticEmail = "sam@gmail.com";
-  final String staticPassword = "admin123";
-
   bool isLogin = false;
 
   @override
@@ -50,8 +47,8 @@ class AuthController extends GetxController {
       errors.add('Email harus diisi');
     } else if (!controllerEmail.text.contains('@')) {
       errors.add('Email harus mengandung simbol @');
-    } 
-    
+    }
+
     if (controllerPassword.text.isEmpty) {
       errors.add('Password harus diisi');
     } else if (controllerPassword.text.length < 8) {
@@ -59,7 +56,8 @@ class AuthController extends GetxController {
     }
 
     if (errors.isNotEmpty) {
-      showSnackbar('Kesalahan', errors.join('\n'), Colors.red, Colors.white, const Duration(seconds: 2), SnackPosition.BOTTOM);
+      showSnackbar('Kesalahan', errors.join('\n'), Colors.red, Colors.white,
+          const Duration(seconds: 2), SnackPosition.BOTTOM);
       return false;
     }
     return true;
@@ -68,15 +66,22 @@ class AuthController extends GetxController {
   //request login Rest-API
   Future<void> loginApi() async {
     if (!checkLogin()) return;
-    bool result = await _authService.login({
+    Map<String, dynamic> result = await _authService.login({
       "username": controllerEmail.text,
       "password": controllerPassword.text,
+      "name": controllerNama.text,
     });
 
-    if (result) {
-      //_storage.login();
-      showSnackbar('Login Berhasil', 'Selamat datang!', Colors.green, Colors.white, const Duration(seconds: 2), SnackPosition.BOTTOM);
+    if (result['success']) {
+      String name = result['name'] ?? 'Pengguna';
+      showSnackbar('Login Berhasil', 'Selamat datang, $name!', Colors.green,
+          Colors.white, const Duration(seconds: 2), SnackPosition.BOTTOM);
+      _storage.login(); // Menyimpan status login
+      _storage.name(name);
       Get.offAllNamed(Routes.dahsboard);
+    } else {
+      showSnackbar('Login Gagal', 'Silakan coba lagi!', Colors.red,
+          Colors.white, const Duration(seconds: 2), SnackPosition.BOTTOM);
     }
   }
 
@@ -109,7 +114,8 @@ class AuthController extends GetxController {
     }
 
     if (errors.isNotEmpty) {
-      showSnackbar('Kesalahan', errors.join('\n'), Colors.red, Colors.white, const Duration(seconds: 2), SnackPosition.BOTTOM);
+      showSnackbar('Kesalahan', errors.join('\n'), Colors.red, Colors.white,
+          const Duration(seconds: 2), SnackPosition.BOTTOM);
       return false;
     }
     return true;
@@ -127,7 +133,13 @@ class AuthController extends GetxController {
     });
 
     if (result) {
-      showSnackbar('Registrasi Berhasil', 'Akun berhasil dibuat. Silakan login!', Colors.green, Colors.white, const Duration(seconds: 2), SnackPosition.BOTTOM);
+      showSnackbar(
+          'Registrasi Berhasil',
+          'Akun berhasil dibuat. Silakan login!',
+          Colors.green,
+          Colors.white,
+          const Duration(seconds: 2),
+          SnackPosition.BOTTOM);
       Get.offAllNamed(Routes.init);
     }
   }
@@ -142,7 +154,7 @@ class AuthController extends GetxController {
     SnackPosition position,
   ) {
     Get.snackbar(
-      title, 
+      title,
       message,
       backgroundColor: colorBackground,
       colorText: textColor,

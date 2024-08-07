@@ -44,7 +44,7 @@ class DashboardController extends GetxController {
 
         for (var item in data) {
           String typetime = item['typetime'];
-          DateTime time = DateTime.parse(item['created_at']);
+          DateTime time = DateTime.parse(item['time']);
           String dateKey = DateFormat('yyyy-MM-dd').format(time);
 
           if (!groupedData.containsKey(dateKey)) {
@@ -54,13 +54,13 @@ class DashboardController extends GetxController {
           if (typetime == 'checkin') { 
             if (groupedData[dateKey]!['check-in'] == null ||
                 time.isAfter(
-                    DateTime.parse(groupedData[dateKey]!['check-in']['created_at']))) {
+                    DateTime.parse(groupedData[dateKey]!['check-in']['time']))) {
               groupedData[dateKey]!['check-in'] = item;
             }
           } else if (typetime == 'checkout') { 
             if (groupedData[dateKey]!['check-out'] == null ||
                 time.isAfter(
-                    DateTime.parse(groupedData[dateKey]!['check-out']['created_at']))) {
+                    DateTime.parse(groupedData[dateKey]!['check-out']['time']))) {
               groupedData[dateKey]!['check-out'] = item;
             }
           }
@@ -73,12 +73,12 @@ class DashboardController extends GetxController {
           return {
             'date': DateFormat('EEEE, dd MMMM yyyy', 'id').format(date),
             'checkIn': entry['check-in'] != null
-                ? DateFormat('HH:mm')
-                    .format(DateTime.parse(entry['check-in']['created_at']))
+                ? DateFormat('HH:mm', 'id')
+                    .format(DateTime.parse(entry['check-in']['time']))
                 : '',
             'checkOut': entry['check-out'] != null
-                ? DateFormat('HH:mm')
-                    .format(DateTime.parse(entry['check-out']['created_at']))
+                ? DateFormat('HH:mm', 'id')
+                    .format(DateTime.parse(entry['check-out']['time']))
                 : '',
           };
         }).toList();
@@ -88,7 +88,7 @@ class DashboardController extends GetxController {
               DateFormat('EEEE, dd MMMM yyyy', 'id').parse(a['date']);
           DateTime dateB =
               DateFormat('EEEE, dd MMMM yyyy', 'id').parse(b['date']);
-          return dateB.compareTo(dateA); // Urutan menurun
+          return dateB.compareTo(dateA);
         });
 
         listhadir.value = attendanceList;

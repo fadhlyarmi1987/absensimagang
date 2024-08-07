@@ -76,7 +76,7 @@ class AuthController extends GetxController {
       String name = result['name'] ?? 'Pengguna';
       showSnackbar('Login Berhasil', 'Selamat datang, $name!', Colors.green,
           Colors.white, const Duration(seconds: 2), SnackPosition.BOTTOM);
-      _storage.login(); // Menyimpan status login
+      _storage.login(); 
       _storage.name(name);
       Get.offAllNamed(Routes.dahsboard);
     } else {

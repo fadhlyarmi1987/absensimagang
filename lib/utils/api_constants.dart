@@ -1,7 +1,7 @@
 class ApiConstants {
   ApiConstants._();
   
-  static const String baseUrl = "http://192.168.64.139:8001/api/";
+  static const String baseUrl = "http://192.168.64.139:8000/api/";
 
   //"http://192.168.64.139:8000/api/"; hotspot
   //"http://192.168.2.91:8000/api/"; wifikantor

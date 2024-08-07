@@ -37,6 +37,11 @@ class _MapPageState extends State<MapPage> {
     super.initState();
     _addMarkersAndCircles();
     _getCurrentLocation();
+
+    // Menampilkan bottom sheet setelah frame pertama selesai dibangun
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showModalBottomSheet(context, 'Pilih Lokasi Kantor');
+    });
   }
 
   void _addMarkersAndCircles() {

@@ -1,71 +1,52 @@
-import 'package:dio/dio.dart';
-import 'package:absensimagang/utils/api_constants.dart';
+// lib/views/controllers/map.controller.dart
+
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../../data/providers/api.provider.dart';
-import '../../utils/storage.dart';
 
 class MapController {
-
-  Future<void> sendDataToDatabaseMeri(BuildContext context) async {
-    String? currentName = await Storage().getName();
-    LatLng officeMeriPosition = LatLng(-7.482906085307217, 112.44929725580936);
-    HttpClient httpClient = HttpClient();
-
-    final dio = Dio();
-    final String apiUrl =
-        '${ApiConstants.baseUrl}${ApiConstants.absen}'; // Ganti dengan URL API yang sesuai
-
-    try {
-      var response = await httpClient.post(apiUrl, data: {
-        'name': currentName,
-        'typetime': 'checkin',
-        'latitude': officeMeriPosition.latitude,
-        'longitude': officeMeriPosition.longitude,
-        'kantorid': 'Meri'
-      });
-
-      if (response.statusCode != 200) {
-        print('Data berhasil dikirim ke database');
-        _showSuccessDialog(context, currentName ?? "", officeMeriPosition);
-      } else {
-        print('Gagal mengirim data ke database');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
+  void showSuccessDialog(BuildContext context, String name, LatLng position) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Center(
+            child: Column(
+              children: [
+                AnimatedCheckmark(),
+                SizedBox(height: 10),
+                Text(
+                  'BERHASIL',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text('Natusi $name Absen Masuk'),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Tutup'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/dashboard',
+                  (Route<dynamic> route) => false,
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
-  Future<void> sendDataToDatabaseGraha(BuildContext context) async {
-    String? currentName = await Storage().getName();
-    LatLng officeGrahaPosition = LatLng(-7.491750, 112.461981);
-    HttpClient httpClient = HttpClient();
-
-    final dio = Dio();
-    final String apiUrl = '${ApiConstants.baseUrl}${ApiConstants.absen}';
-
-    try {
-      var response = await httpClient.post(apiUrl, data: {
-        'name': currentName,
-        'typetime': 'checkin',
-        'latitude': officeGrahaPosition.latitude,
-        'longitude': officeGrahaPosition.longitude,
-        'kantorid': 'Graha'
-      });
-
-      if (response.statusCode == 200) {
-        print('Data berhasil dikirim ke database');
-        _showSuccessDialog(context, currentName ?? "", officeGrahaPosition);
-      } else {
-        print('Gagal mengirim data ke database');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
-
-  void _showOutOfRadiusModal(BuildContext context) {
+  void showOutOfRadiusModal(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -76,7 +57,7 @@ class MapController {
                 FadeInXMark(),
                 SizedBox(height: 10),
                 Text(
-                  'Di Luar Radius',
+                  'UUUPPPSSS...',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ],
@@ -102,45 +83,7 @@ class MapController {
       },
     );
   }
-
-
-  void _showSuccessDialog(BuildContext context, String name, LatLng position) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Center(
-            child: Column(
-              children: [
-                AnimatedCheckmark(),
-                SizedBox(height: 10),
-                Text(
-                  'BERHASIL',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Text('Natusi $name Absen Masuk'),
-              SizedBox(height: 10),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Tutup'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+  
 }
 
 class AnimatedCheckmark extends StatefulWidget {

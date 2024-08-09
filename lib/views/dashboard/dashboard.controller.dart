@@ -17,6 +17,8 @@ class DashboardController extends GetxController {
   var name = ''.obs;
   var listhadir = <Map<String, dynamic>>[].obs;
   final Dio _dio = Dio();
+  
+  get $name => null;
 
   @override
   void onInit() {
@@ -33,9 +35,10 @@ class DashboardController extends GetxController {
   }
 
   Future<void> fetchAttendance() async {
+    name.value = _storage.getName()??"";
     try {
       final response =
-          await _dio.get('${ApiConstants.baseUrl}${ApiConstants.listabsen}');
+          await _dio.get('${ApiConstants.baseUrl}${ApiConstants.listabsen2}/${name.value}');
 
       if (response.statusCode == 200) {
         List<dynamic> data = response.data;

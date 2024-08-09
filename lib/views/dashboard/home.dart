@@ -1,6 +1,6 @@
 import 'package:get_storage/get_storage.dart';
 
-import '../modal/maps_modal.dart';
+import '../maps/maps.view.dart';
 import 'dashboard.controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -179,7 +179,7 @@ class HomePage extends GetView<DashboardController> {
                                       showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
-                                          return MapPage();
+                                          return MapPage(isCheckIn: true);
                                         },
                                       );
                                     },
@@ -196,7 +196,14 @@ class HomePage extends GetView<DashboardController> {
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.red),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return MapPage(isCheckIn: false);
+                                        },
+                                      );
+                                    },
                                     child: Text('Check-Out',
                                         style: TextStyle(color: Colors.white)),
                                   ),

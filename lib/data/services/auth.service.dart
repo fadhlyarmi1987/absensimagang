@@ -17,9 +17,11 @@ class AuthService {
     var responseBody = response.data;
     if (responseBody['metaData']['code'] == 200) {
       storage.name(responseBody['response']['name']);
+      storage.email(responseBody ['response']['username']);
       return {
         'success': true,
-        'name': responseBody['response']['name'] ?? 'Pengguna'
+        'name': responseBody['response']['name'] ?? 'Pengguna',
+        'username': responseBody['response']['username'] ?? 'Pengguna',
       };
     } else {
       return {'success': false, 'name': null};

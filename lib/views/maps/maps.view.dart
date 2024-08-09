@@ -130,7 +130,6 @@ class _MapPageState extends State<MapPage> {
         color: Colors.white,
         child: Card(
           elevation: 4,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

@@ -15,6 +15,7 @@ class DashboardBinding implements Bindings {
 class DashboardController extends GetxController {
   final Storage _storage = Storage();
   var name = ''.obs;
+  var email = ''.obs;
   var listhadir = <Map<String, dynamic>>[].obs;
   final Dio _dio = Dio();
   
@@ -25,6 +26,7 @@ class DashboardController extends GetxController {
     super.onInit();
     fetchAttendance();
     name.value = _storage.getName()??"";
+    email.value = _storage.getEmail() ?? "";
 
     print(name);
   }
@@ -103,7 +105,7 @@ class DashboardController extends GetxController {
     }
   }
 
-  void setName(String userName) {
-    name.value = userName;
-  }
+  // void setName(String userName) {
+  //   name.value = userName;
+  // }
 }

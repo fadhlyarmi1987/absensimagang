@@ -1,7 +1,10 @@
+import 'package:absensimagang/utils/storage.dart';
+import '../views/dashboard/edit.profile.dart';
+
 class ApiConstants {
   ApiConstants._();
   
-  static const String baseUrl = "http://192.168.2.95:8000/api/";
+  static const String baseUrl = "http://192.168.2.70:8000/api/";
 
   //"http://192.168.64.139:8000/api/"; hotspot
   //"http://192.168.2.91:8000/api/"; wifikantor
@@ -16,6 +19,7 @@ class ApiConstants {
   static const String absen = "absen";
   static const String notifications = "notifications";
   static const String file = "files";
+  static const String waktu = "server-time";
   static String fileDownload(String id) => "files/$id";
 
 }

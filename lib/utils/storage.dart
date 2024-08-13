@@ -19,6 +19,10 @@ class Storage {
 
   String? getPassword() => _storage.read<String>('password') ?? 'unknown';
 
+  void id(int id) => _storage.write('id', id);
+
+  int? getId() => _storage.read<int>('id');
+
   void logout() {
     _storage.remove('isLogin');
     _storage.remove('name');

@@ -75,12 +75,13 @@ class AuthController extends GetxController {
     if (result['success']) {
       String name = result['name'] ?? 'Pengguna';
       String email = result['username'] ?? 'unknown';
+      int id = result ['id_user'] ?? 0;
       
       showSnackbar('Login Berhasil', 'Selamat datang, $name!', Colors.green,
           Colors.white, const Duration(seconds: 2), SnackPosition.BOTTOM);
       _storage.login(); 
       Get.offAllNamed(Routes.dahsboard);
-      print('cek: $email');
+      print('cek: $email, id: $id');
     } else {
       showSnackbar('Login Gagal', 'Silakan coba lagi!', Colors.red,
           Colors.white, const Duration(seconds: 2), SnackPosition.BOTTOM);

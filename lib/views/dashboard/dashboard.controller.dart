@@ -13,11 +13,13 @@ class DashboardBinding implements Bindings {
 }
 
 class DashboardController extends GetxController {
-  final Storage _storage = Storage();
+  final Storage storage = Storage();
   var name = ''.obs;
   var email = ''.obs;
+  var id = ''.obs;
   var listhadir = <Map<String, dynamic>>[].obs;
   final Dio _dio = Dio();
+  
   
   get $name => null;
 
@@ -25,19 +27,20 @@ class DashboardController extends GetxController {
   void onInit() {
     super.onInit();
     fetchAttendance();
-    name.value = _storage.getName()??"";
-    email.value = _storage.getEmail() ?? "";
+    name.value = storage.getName()??"";
+    email.value = storage.getEmail() ?? "";
+    id.value = storage.getId().toString();
 
     print(name);
   }
 
   void logout() {
-    _storage.logout();
+    storage.logout();
     Get.toNamed(Routes.init);
   }
 
   Future<void> fetchAttendance() async {
-    name.value = _storage.getName()??"";
+    name.value = storage.getName()??"";
     try {
       final response =
           await _dio.get('${ApiConstants.baseUrl}${ApiConstants.listabsen2}/${name.value}');

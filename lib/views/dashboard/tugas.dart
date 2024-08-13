@@ -71,7 +71,7 @@ class _TugasPageState extends State<TugasPage> {
                     borderRadius: BorderRadius.circular(5),
                   ),
                   width: screenWidth * 0.9,
-                  height: screenHeight * 0.81,
+                  height: screenHeight * 0.845,
                   child: FutureBuilder<List<Map<String, dynamic>>>(
                     future: _files,
                     builder: (context, snapshot) {

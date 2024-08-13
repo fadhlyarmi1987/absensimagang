@@ -47,6 +47,8 @@ dependencies:
   flutter_spinkit: ^5.2.1
   url_launcher: ^6.3.0
   flutter_downloader: ^1.11.8
+  timezone: ^0.9.4
+  http: ^1.2.2
 
 dev_dependencies:
   flutter_test:

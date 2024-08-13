@@ -1,13 +1,33 @@
-import 'package:get_storage/get_storage.dart';
-import '../maps/maps.view.dart';
-import 'dashboard.controller.dart';
+import 'package:absensimagang/utils/api_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import '../maps/maps.view.dart';
+import 'dashboard.controller.dart';
 
 class HomePage extends GetView<DashboardController> {
   const HomePage({super.key});
+
+  Future<DateTime?> fetchServerTime() async {
+  try {
+    final response = await http.get(Uri.parse('${ApiConstants.baseUrl}${ApiConstants.waktu}'));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return DateTime.parse(data['server_time']);
+    } else {
+      print('Failed to load server time: ${response.statusCode}');
+      return null;
+    }
+  } catch (e) {
+    print('Error fetching server time: $e');
+    return null;
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +36,7 @@ class HomePage extends GetView<DashboardController> {
         child: Stack(
           children: [
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -34,8 +54,8 @@ class HomePage extends GetView<DashboardController> {
                     Padding(
                       padding: const EdgeInsets.only(top: 0.0, right: 260.0),
                       child: Card(
-                        color: Color.fromARGB(255, 255, 255, 255),
-                        shape: RoundedRectangleBorder(
+                        color: const Color.fromARGB(255, 255, 255, 255),
+                        shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.only(
                             topRight: Radius.circular(160),
                             bottomRight: Radius.circular(160),
@@ -62,33 +82,42 @@ class HomePage extends GetView<DashboardController> {
                               height: 1.2,
                             ),
                           ),
-                          StreamBuilder(
-                            stream: Stream.periodic(Duration(seconds: 1)),
+                          StreamBuilder<DateTime?>(
+                            stream: Stream.periodic(const Duration(seconds: 1)).asyncMap((_) => fetchServerTime()),
                             builder: (context, snapshot) {
-                              var now = DateTime.now();
-                              var formattedTime =
-                                  DateFormat('HH:mm:ss').format(now);
-                              var formattedDate =
-                                  DateFormat('EEEE, dd MMMM yyyy', 'id')
-                                      .format(now);
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return const Center(child: CircularProgressIndicator());
+                              }
+
+                              if (snapshot.hasError || !snapshot.hasData) {
+                                return const Center(child: Text('Error fetching time'));
+                              }
+
+                              // Set your location
+                              var location = tz.getLocation('Asia/Jakarta'); 
+                              var utcTime = snapshot.data!;
+                              var localTime = tz.TZDateTime.from(utcTime, location);
+
+                              var formattedTime = DateFormat('HH:mm:ss').format(localTime);
+                              var formattedDate = DateFormat('EEEE, dd MMMM yyyy', 'id').format(localTime);
 
                               return Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
                                     formattedTime,
-                                    style: TextStyle(
-                                        fontSize: 50,
-                                        color:
-                                            Color.fromARGB(255, 255, 255, 255)),
+                                    style: const TextStyle(
+                                      fontSize: 50,
+                                      color: Color.fromARGB(255, 255, 255, 255),
+                                    ),
                                   ),
-                                  SizedBox(height: 1),
+                                  const SizedBox(height: 1),
                                   Text(
                                     formattedDate,
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        color: const Color.fromARGB(
-                                            255, 255, 255, 255)),
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      color: Color.fromARGB(255, 255, 255, 255),
+                                    ),
                                   ),
                                 ],
                               );
@@ -112,26 +141,21 @@ class HomePage extends GetView<DashboardController> {
                     child: Column(
                       children: [
                         Container(
-                          //color: Colors.blue,
                           width: 150,
                           child: Text(
                             'Hai,',
                             style: GoogleFonts.lobster(
-                              fontSize: 15,
-                              color: Colors.white
-                            ),
+                                fontSize: 15, color: Colors.white),
                             textAlign: TextAlign.right,
                           ),
                         ),
                         Container(
                           width: 150,
-                          //color: Colors.black,
-                          child: Text('${controller.name.value}',
-                          style: GoogleFonts.lobster(
-                            fontSize: 20,
-                            color: Colors.white
-                          ),
-                          textAlign: TextAlign.right,
+                          child: Text(
+                            '${controller.name.value}',
+                            style: GoogleFonts.lobster(
+                                fontSize: 20, color: Colors.white),
+                            textAlign: TextAlign.right,
                           ),
                         )
                       ],
@@ -147,7 +171,7 @@ class HomePage extends GetView<DashboardController> {
               child: Container(
                 height: 150,
                 child: Card(
-                  color: Color.fromARGB(255, 255, 255, 255),
+                  color: const Color.fromARGB(255, 255, 255, 255),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0),
                   ),
@@ -162,15 +186,15 @@ class HomePage extends GetView<DashboardController> {
                             fontSize: 16,
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Padding(
-                          padding: EdgeInsets.only(left: 30, right: 30),
+                          padding: const EdgeInsets.only(left: 30, right: 30),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Column(
                                 children: [
-                                  Text('07:00 - 08:00'),
+                                  const Text('07:00 - 08:00'),
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.green),
@@ -178,11 +202,11 @@ class HomePage extends GetView<DashboardController> {
                                       showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
-                                          return MapPage(isCheckIn: true);
+                                          return const MapPage(isCheckIn: true);
                                         },
                                       );
                                     },
-                                    child: Text(
+                                    child: const Text(
                                       'Check-In',
                                       style: TextStyle(color: Colors.white),
                                     ),
@@ -191,7 +215,7 @@ class HomePage extends GetView<DashboardController> {
                               ),
                               Column(
                                 children: [
-                                  Text('16:30 - 17:00'),
+                                  const Text('16:30 - 17:00'),
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.red),
@@ -199,11 +223,11 @@ class HomePage extends GetView<DashboardController> {
                                       showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
-                                          return MapPage(isCheckIn: false);
+                                          return const MapPage(isCheckIn: false);
                                         },
                                       );
                                     },
-                                    child: Text('Check-Out',
+                                    child: const Text('Check-Out',
                                         style: TextStyle(color: Colors.white)),
                                   ),
                                 ],
@@ -230,7 +254,7 @@ class HomePage extends GetView<DashboardController> {
                   borderRadius: BorderRadius.circular(15.0),
                   child: Container(
                     height: 300,
-                    color: Color.fromARGB(255, 247, 245, 245),
+                    color: const Color.fromARGB(255, 247, 245, 245),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -256,7 +280,7 @@ class HomePage extends GetView<DashboardController> {
                                     ListTile(
                                       title: Text(
                                         attendance['date']!,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             color: Colors.blue,
                                             fontWeight: FontWeight.w500),
                                       ),
@@ -264,7 +288,7 @@ class HomePage extends GetView<DashboardController> {
                                         children: [
                                           Row(
                                             children: [
-                                              Text('Check-In:'),
+                                              const Text('Check-In:'),
                                               Expanded(
                                                 child: Container(
                                                   alignment:
@@ -277,7 +301,7 @@ class HomePage extends GetView<DashboardController> {
                                           ),
                                           Row(
                                             children: [
-                                              Text('Check-Out:'),
+                                              const Text('Check-Out:'),
                                               Expanded(
                                                 child: Container(
                                                   alignment:
@@ -291,7 +315,7 @@ class HomePage extends GetView<DashboardController> {
                                         ],
                                       ),
                                     ),
-                                    Divider(),
+                                    const Divider(),
                                   ],
                                 );
                               },

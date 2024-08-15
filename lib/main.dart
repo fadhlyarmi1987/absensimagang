@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       
-      initialRoute: '/Login',
+      initialRoute: '/Splash',
       getPages: pages,
     );
   }

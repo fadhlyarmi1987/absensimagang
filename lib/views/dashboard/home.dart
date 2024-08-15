@@ -14,23 +14,28 @@ class HomePage extends GetView<DashboardController> {
   const HomePage({super.key});
 
   Future<DateTime?> fetchServerTime() async {
-  try {
-    final response = await http.get(Uri.parse('${ApiConstants.baseUrl}${ApiConstants.waktu}'));
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return DateTime.parse(data['server_time']);
-    } else {
-      print('Failed to load server time: ${response.statusCode}');
+    try {
+      final response = await http.get(Uri.parse('${ApiConstants.baseUrl}${ApiConstants.waktu}'));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return DateTime.parse(data['server_time']);
+      } else {
+        print('Failed to load server time: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching server time: $e');
       return null;
     }
-  } catch (e) {
-    print('Error fetching server time: $e');
-    return null;
   }
-}
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final screenWidth = mediaQuery.size.width;
+    final screenHeight = mediaQuery.size.height;
+    final isPortrait = mediaQuery.orientation == Orientation.portrait;
+
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -44,7 +49,7 @@ class HomePage extends GetView<DashboardController> {
                     Color.fromARGB(255, 14, 142, 197),
                     Colors.white,
                   ],
-                  stops: [0.35, 0.35],
+                  stops: [0.39, 0.39],
                 ),
               ),
               child: SizedBox(
@@ -52,7 +57,10 @@ class HomePage extends GetView<DashboardController> {
                 child: Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(top: 0.0, right: 260.0),
+                      padding: EdgeInsets.only(
+                        top: 0.0,
+                        right: screenWidth * 0.6, // Adjusted based on screen width
+                      ),
                       child: Card(
                         color: const Color.fromARGB(255, 255, 255, 255),
                         shape: const RoundedRectangleBorder(
@@ -62,8 +70,8 @@ class HomePage extends GetView<DashboardController> {
                           ),
                         ),
                         child: SizedBox(
-                          height: 45,
-                          width: 150,
+                          height: screenHeight * 0.06, // Responsive height
+                          width: screenWidth * 0.4, // Responsive width
                           child: Image.asset("assets/Logo_Natusi.png"),
                         ),
                       ),
@@ -77,7 +85,7 @@ class HomePage extends GetView<DashboardController> {
                             'Now',
                             style: GoogleFonts.roboto(
                               fontWeight: FontWeight.normal,
-                              fontSize: 20,
+                              fontSize: screenHeight * 0.025, // Responsive font size
                               color: Colors.white,
                               height: 1.2,
                             ),
@@ -88,35 +96,35 @@ class HomePage extends GetView<DashboardController> {
                               if (snapshot.connectionState == ConnectionState.waiting) {
                                 return const Center(child: CircularProgressIndicator());
                               }
-
+        
                               if (snapshot.hasError || !snapshot.hasData) {
                                 return const Center(child: Text('Error fetching time'));
                               }
-
+        
                               // Set your location
-                              var location = tz.getLocation('Asia/Jakarta'); 
+                              var location = tz.getLocation('Asia/Jakarta');
                               var utcTime = snapshot.data!;
                               var localTime = tz.TZDateTime.from(utcTime, location);
-
+        
                               var formattedTime = DateFormat('HH:mm:ss').format(localTime);
                               var formattedDate = DateFormat('EEEE, dd MMMM yyyy', 'id').format(localTime);
-
+        
                               return Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
                                     formattedTime,
-                                    style: const TextStyle(
-                                      fontSize: 50,
-                                      color: Color.fromARGB(255, 255, 255, 255),
+                                    style: TextStyle(
+                                      fontSize: screenHeight * 0.06, // Responsive font size
+                                      color: const Color.fromARGB(255, 255, 255, 255),
                                     ),
                                   ),
                                   const SizedBox(height: 1),
                                   Text(
                                     formattedDate,
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      color: Color.fromARGB(255, 255, 255, 255),
+                                    style: TextStyle(
+                                      fontSize: screenHeight * 0.025, // Responsive font size
+                                      color: const Color.fromARGB(255, 255, 255, 255),
                                     ),
                                   ),
                                 ],
@@ -131,30 +139,32 @@ class HomePage extends GetView<DashboardController> {
               ),
             ),
             Positioned(
-              top: 10,
-              right: 10,
+              top: screenHeight * 0.01, // Responsive position
+              right: screenWidth * 0.03, // Responsive position
               child: Obx(() {
                 return Align(
                   alignment: Alignment.topRight,
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: EdgeInsets.all(screenHeight * 0.01), // Responsive padding
                     child: Column(
                       children: [
                         Container(
-                          width: 150,
+                          width: screenWidth * 0.4, // Adjusted based on screen width
                           child: Text(
                             'Hai,',
                             style: GoogleFonts.lobster(
-                                fontSize: 15, color: Colors.white),
+                                fontSize: screenHeight * 0.02, // Responsive font size
+                                color: Colors.white),
                             textAlign: TextAlign.right,
                           ),
                         ),
                         Container(
-                          width: 150,
+                          width: screenWidth * 0.4, // Adjusted based on screen width
                           child: Text(
                             '${controller.name.value}',
-                            style: GoogleFonts.lobster(
-                                fontSize: 20, color: Colors.white),
+                            style: GoogleFonts.greatVibes(
+                                fontSize: 20, // Responsive font size
+                                color: Colors.white),
                             textAlign: TextAlign.right,
                           ),
                         )
@@ -165,11 +175,11 @@ class HomePage extends GetView<DashboardController> {
               }),
             ),
             Positioned(
-              top: 210,
-              left: 40,
-              right: 40,
+              top: screenHeight * 0.26, // Responsive position
+              left: screenWidth * 0.1, // Responsive position
+              right: screenWidth * 0.1, // Responsive position
               child: Container(
-                height: 150,
+                height: isPortrait ? screenHeight * 0.2 : screenHeight * 0.25, // Adjusted height based on orientation
                 child: Card(
                   color: const Color.fromARGB(255, 255, 255, 255),
                   shape: RoundedRectangleBorder(
@@ -183,18 +193,21 @@ class HomePage extends GetView<DashboardController> {
                           'Keterangan Jam Absensi',
                           style: GoogleFonts.roboto(
                             fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                            fontSize: screenHeight * 0.02, // Responsive font size
                           ),
                         ),
-                        const SizedBox(height: 10),
+                        SizedBox(height: screenHeight * 0.015), // Responsive spacing
                         Padding(
-                          padding: const EdgeInsets.only(left: 30, right: 30),
+                          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Column(
                                 children: [
-                                  const Text('07:00 - 08:00'),
+                                  Text(
+                                    '07:00 - 08:00',
+                                    style: TextStyle(fontSize: screenHeight * 0.02),
+                                  ),
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.green),
@@ -206,16 +219,22 @@ class HomePage extends GetView<DashboardController> {
                                         },
                                       );
                                     },
-                                    child: const Text(
+                                    child: Text(
                                       'Check-In',
-                                      style: TextStyle(color: Colors.white),
+                                      style: TextStyle(
+                                        fontSize: screenHeight * 0.02, // Responsive font size
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ),
                                 ],
                               ),
                               Column(
                                 children: [
-                                  const Text('16:30 - 17:00'),
+                                  Text(
+                                    '16:30 - 17:00',
+                                    style: TextStyle(fontSize: screenHeight * 0.02),
+                                  ),
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.red),
@@ -227,8 +246,13 @@ class HomePage extends GetView<DashboardController> {
                                         },
                                       );
                                     },
-                                    child: const Text('Check-Out',
-                                        style: TextStyle(color: Colors.white)),
+                                    child: Text(
+                                      'Check-Out',
+                                      style: TextStyle(
+                                        fontSize: screenHeight * 0.02, // Responsive font size
+                                        color: Colors.white,
+                                      ),
+                                    ),
                                   ),
                                 ],
                               )
@@ -242,9 +266,9 @@ class HomePage extends GetView<DashboardController> {
               ),
             ),
             Positioned(
-              top: 380,
-              left: 40,
-              right: 40,
+              top: screenHeight * 0.5, // Responsive position
+              left: screenWidth * 0.1, // Responsive position
+              right: screenWidth * 0.1, // Responsive position
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.black),
@@ -253,18 +277,18 @@ class HomePage extends GetView<DashboardController> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(15.0),
                   child: Container(
-                    height: 300,
+                    height: screenHeight * 0.35, // Adjusted height based on screen height
                     color: const Color.fromARGB(255, 247, 245, 245),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(10.0),
+                          padding: EdgeInsets.all(screenHeight * 0.015), // Responsive padding
                           child: Text(
                             'Recent Attendance',
                             style: GoogleFonts.roboto(
                               fontWeight: FontWeight.bold,
-                              fontSize: 12,
+                              fontSize: screenHeight * 0.015, // Responsive font size
                             ),
                           ),
                         ),
@@ -274,40 +298,44 @@ class HomePage extends GetView<DashboardController> {
                               itemCount: controller.listhadir.length,
                               itemBuilder: (context, index) {
                                 var attendance = controller.listhadir[index];
-
+        
                                 return Column(
                                   children: [
                                     ListTile(
                                       title: Text(
                                         attendance['date']!,
-                                        style: const TextStyle(
-                                            color: Colors.blue,
-                                            fontWeight: FontWeight.w500),
+                                        style: TextStyle(
+                                          color: Colors.blue,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: screenHeight * 0.02, // Responsive font size
+                                        ),
                                       ),
                                       subtitle: Column(
                                         children: [
                                           Row(
                                             children: [
-                                              const Text('Check-In:'),
+                                              Text('Check-In:', style: TextStyle(fontSize: screenHeight * 0.015)),
                                               Expanded(
                                                 child: Container(
-                                                  alignment:
-                                                      Alignment.centerRight,
+                                                  alignment: Alignment.centerRight,
                                                   child: Text(
-                                                      '${attendance['checkIn']}'),
+                                                    '${attendance['checkIn']}',
+                                                    style: TextStyle(fontSize: screenHeight * 0.015),
+                                                  ),
                                                 ),
                                               ),
                                             ],
                                           ),
                                           Row(
                                             children: [
-                                              const Text('Check-Out:'),
+                                              Text('Check-Out:', style: TextStyle(fontSize: screenHeight * 0.015)),
                                               Expanded(
                                                 child: Container(
-                                                  alignment:
-                                                      Alignment.centerRight,
+                                                  alignment: Alignment.centerRight,
                                                   child: Text(
-                                                      '${attendance['checkOut']}'),
+                                                    '${attendance['checkOut']}',
+                                                    style: TextStyle(fontSize: screenHeight * 0.015),
+                                                  ),
                                                 ),
                                               ),
                                             ],

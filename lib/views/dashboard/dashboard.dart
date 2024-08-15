@@ -45,7 +45,6 @@ class DashboardPage extends GetView<DashboardController> {
         title: ("Notifikasi"),
         activeColorPrimary: CupertinoColors.activeBlue,
         inactiveColorPrimary: CupertinoColors.systemGrey,
-        //scrollController: _scrollController2,
         routeAndNavigatorSettings: RouteAndNavigatorSettings(
           initialRoute: "/",
           routes: {
@@ -59,7 +58,6 @@ class DashboardPage extends GetView<DashboardController> {
         title: ("Tugas"),
         activeColorPrimary: CupertinoColors.activeBlue,
         inactiveColorPrimary: CupertinoColors.systemGrey,
-        //scrollController: _scrollController2,
         routeAndNavigatorSettings: RouteAndNavigatorSettings(
           initialRoute: "/",
           routes: {
@@ -91,32 +89,26 @@ class DashboardPage extends GetView<DashboardController> {
         controller: _controller,
         screens: _buildScreens(),
         items: _navBarsItems(),
-        handleAndroidBackButtonPress: true, // Default is true.
-        resizeToAvoidBottomInset:
-            true, // This needs to be true if you want to move up the screen on a non-scrollable screen when keyboard appears. Default is true.
-        stateManagement: true, // Default is true.
+        handleAndroidBackButtonPress: true,
+        resizeToAvoidBottomInset: true,
+        stateManagement: true,
         hideNavigationBarWhenKeyboardAppears: true,
-        //popBehaviorOnSelectedNavBarItemPress: PopActionScreensType.all,
         padding: const EdgeInsets.only(top: 8),
-        backgroundColor: Color.fromARGB(255, 214, 214, 214),
+        backgroundColor: Color.fromARGB(255, 225, 225, 225),
         isVisible: true,
         animationSettings: const NavBarAnimationSettings(
           navBarItemAnimation: ItemAnimationSettings(
-            // Navigation Bar's items animation properties.
             duration: Duration(milliseconds: 400),
             curve: Curves.ease,
           ),
           screenTransitionAnimation: ScreenTransitionAnimationSettings(
-            // Screen transition animation on change of selected tab.
             animateTabTransition: true,
             duration: Duration(milliseconds: 200),
             screenTransitionAnimationType: ScreenTransitionAnimationType.fadeIn,
           ),
         ),
-        confineToSafeArea: true,
+        confineToSafeArea: false,
         navBarHeight: kBottomNavigationBarHeight,
-        navBarStyle: NavBarStyle
-            .style6 //_navBarStyle, // Choose the nav bar style with this property
-        );
+        navBarStyle: NavBarStyle.style6);
   }
 }

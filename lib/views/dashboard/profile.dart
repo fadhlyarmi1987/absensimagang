@@ -68,6 +68,7 @@ class ProfilePage extends StatelessWidget {
                                 style: GoogleFonts.roboto(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20,
+                                  color: Colors.grey[700],
                                 ),
                                 textAlign: TextAlign.center,
                               ),

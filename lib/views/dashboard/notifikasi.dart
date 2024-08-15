@@ -31,7 +31,7 @@ class _NotifikasiPageState extends State<NotifikasiPage> {
               decoration: BoxDecoration(
                 gradient: RadialGradient(
                   center: Alignment(0, -1),
-                  stops: [0.3, 0.7],
+                  stops: [0.3, 2.0],
                   radius: 1.5,
                   colors: [
                     const Color.fromARGB(255, 193, 188, 188),
@@ -46,7 +46,7 @@ class _NotifikasiPageState extends State<NotifikasiPage> {
                 alignment: Alignment.topCenter,
                 child: Container(
                   decoration: BoxDecoration(
-                      color: Color.fromARGB(111, 255, 255, 255),
+                      color: Color.fromARGB(90, 255, 255, 255),
                       borderRadius: BorderRadius.circular(5),
                       boxShadow: [
                         BoxShadow(

@@ -62,16 +62,24 @@ class _TugasPageState extends State<TugasPage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 40),
+              padding: const EdgeInsets.only(top: 70),
               child: Align(
                 alignment: Alignment.topCenter,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Color.fromARGB(111, 255, 255, 255),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
+                      color: Color.fromARGB(111, 255, 255, 255),
+                      borderRadius: BorderRadius.circular(5),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color.fromARGB(255, 0, 0, 0)
+                              .withOpacity(0.3),
+                          spreadRadius: 2,
+                          blurRadius: 7,
+                          offset: Offset(0, 7),
+                        )
+                      ]),
                   width: screenWidth * 0.9,
-                  height: screenHeight * 0.845,
+                  height: screenHeight * 0.81,
                   child: FutureBuilder<List<Map<String, dynamic>>>(
                     future: _files,
                     builder: (context, snapshot) {

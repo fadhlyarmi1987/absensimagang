@@ -19,10 +19,17 @@ class _NotifikasiPageState extends State<NotifikasiPage> {
     _notifications = NotificationService().fetchNotifications();
   }
 
+  Future<void> _refreshNotifications() async {
+    setState(() {
+      _notifications = NotificationService().fetchNotifications();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -59,68 +66,71 @@ class _NotifikasiPageState extends State<NotifikasiPage> {
                       ]),
                   width: screenWidth * 0.9, // 90% dari lebar layar
                   height: screenHeight * 0.81,
-                  child: FutureBuilder<List<Map<String, dynamic>>>(
-                    future: _notifications,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}'));
-                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return Center(child: Text('Tidak Ada Notifikasi'));
-                      } else {
-                        final itemCount = min(snapshot.data!.length, 15);
-                        return ListView.builder(
-                          itemCount: itemCount,
-                          itemBuilder: (context, index) {
-                            final notification = snapshot.data![index];
-                            final pengumuman = notification['pengumuman'];
-                            final createdAt = notification['created_at'];
-                            final formattedDate =
-                                DateFormat('dd MMM yyyy : HH:mm')
-                                    .format(DateTime.parse(createdAt));
+                  child: RefreshIndicator(
+                    onRefresh: _refreshNotifications,
+                    child: FutureBuilder<List<Map<String, dynamic>>>(
+                      future: _notifications,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return Center(child: Text('Tidak Ada Notifikasi'));
+                        } else {
+                          final itemCount = min(snapshot.data!.length, 15);
+                          return ListView.builder(
+                            itemCount: itemCount,
+                            itemBuilder: (context, index) {
+                              final notification = snapshot.data![index];
+                              final pengumuman = notification['pengumuman'];
+                              final createdAt = notification['created_at'];
+                              final formattedDate =
+                                  DateFormat('dd MMM yyyy : HH:mm')
+                                      .format(DateTime.parse(createdAt));
 
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 4.0),
-                              child: Card(
-                                elevation: 4,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        pengumuman,
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      SizedBox(height: 5),
-                                      Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Text(
-                                          formattedDate,
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 0.0),
+                                child: Card(
+                                  elevation: 4,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          pengumuman,
                                           style: TextStyle(
-                                            fontSize: 9,
-                                            color: Colors.grey[600],
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w500,
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                        SizedBox(height: 5),
+                                        Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Text(
+                                            formattedDate,
+                                            style: TextStyle(
+                                              fontSize: 9,
+                                              color: Colors.grey[600],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
-                        );
-                      }
-                    },
+                              );
+                            },
+                          );
+                        }
+                      },
+                    ),
                   ),
                 ),
               ),

@@ -27,6 +27,10 @@ class HomePage extends GetView<DashboardController> {
       print('Error fetching server time: $e');
       return null;
     }
+
+    Future<void> _refreshData() async {
+    await controller.fetchAttendance(); // Call fetchAttendance to refresh data
+  }
   }
 
   @override
@@ -59,7 +63,7 @@ class HomePage extends GetView<DashboardController> {
                     Padding(
                       padding: EdgeInsets.only(
                         top: 0.0,
-                        right: screenWidth * 0.6, // Adjusted based on screen width
+                        right: screenWidth * 0.6,
                       ),
                       child: Card(
                         color: const Color.fromARGB(255, 255, 255, 255),
@@ -70,8 +74,8 @@ class HomePage extends GetView<DashboardController> {
                           ),
                         ),
                         child: SizedBox(
-                          height: screenHeight * 0.06, // Responsive height
-                          width: screenWidth * 0.4, // Responsive width
+                          height: screenHeight * 0.06,
+                          width: screenWidth * 0.4,
                           child: Image.asset("assets/Logo_Natusi.png"),
                         ),
                       ),
@@ -85,7 +89,7 @@ class HomePage extends GetView<DashboardController> {
                             'Now',
                             style: GoogleFonts.roboto(
                               fontWeight: FontWeight.normal,
-                              fontSize: screenHeight * 0.025, // Responsive font size
+                              fontSize: screenHeight * 0.025,
                               color: Colors.white,
                               height: 1.2,
                             ),
@@ -96,26 +100,25 @@ class HomePage extends GetView<DashboardController> {
                               if (snapshot.connectionState == ConnectionState.waiting) {
                                 return const Center(child: CircularProgressIndicator());
                               }
-        
+
                               if (snapshot.hasError || !snapshot.hasData) {
                                 return const Center(child: Text('Error fetching time'));
                               }
-        
-                              // Set your location
+
                               var location = tz.getLocation('Asia/Jakarta');
                               var utcTime = snapshot.data!;
                               var localTime = tz.TZDateTime.from(utcTime, location);
-        
+
                               var formattedTime = DateFormat('HH:mm:ss').format(localTime);
                               var formattedDate = DateFormat('EEEE, dd MMMM yyyy', 'id').format(localTime);
-        
+
                               return Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
                                     formattedTime,
                                     style: TextStyle(
-                                      fontSize: screenHeight * 0.06, // Responsive font size
+                                      fontSize: screenHeight * 0.06,
                                       color: const Color.fromARGB(255, 255, 255, 255),
                                     ),
                                   ),
@@ -123,7 +126,7 @@ class HomePage extends GetView<DashboardController> {
                                   Text(
                                     formattedDate,
                                     style: TextStyle(
-                                      fontSize: screenHeight * 0.025, // Responsive font size
+                                      fontSize: screenHeight * 0.025,
                                       color: const Color.fromARGB(255, 255, 255, 255),
                                     ),
                                   ),
@@ -139,31 +142,31 @@ class HomePage extends GetView<DashboardController> {
               ),
             ),
             Positioned(
-              top: screenHeight * 0.01, // Responsive position
-              right: screenWidth * 0.03, // Responsive position
+              top: screenHeight * 0.01,
+              right: screenWidth * 0.03,
               child: Obx(() {
                 return Align(
                   alignment: Alignment.topRight,
                   child: Padding(
-                    padding: EdgeInsets.all(screenHeight * 0.01), // Responsive padding
+                    padding: EdgeInsets.all(screenHeight * 0.01),
                     child: Column(
                       children: [
                         Container(
-                          width: screenWidth * 0.4, // Adjusted based on screen width
+                          width: screenWidth * 0.4,
                           child: Text(
                             'Hai,',
                             style: GoogleFonts.lobster(
-                                fontSize: screenHeight * 0.02, // Responsive font size
+                                fontSize: screenHeight * 0.02,
                                 color: Colors.white),
                             textAlign: TextAlign.right,
                           ),
                         ),
                         Container(
-                          width: screenWidth * 0.4, // Adjusted based on screen width
+                          width: screenWidth * 0.4,
                           child: Text(
                             '${controller.name.value}',
                             style: GoogleFonts.greatVibes(
-                                fontSize: 20, // Responsive font size
+                                fontSize: 20,
                                 color: Colors.white),
                             textAlign: TextAlign.right,
                           ),
@@ -175,11 +178,11 @@ class HomePage extends GetView<DashboardController> {
               }),
             ),
             Positioned(
-              top: screenHeight * 0.26, // Responsive position
-              left: screenWidth * 0.1, // Responsive position
-              right: screenWidth * 0.1, // Responsive position
+              top: screenHeight * 0.26,
+              left: screenWidth * 0.1,
+              right: screenWidth * 0.1,
               child: Container(
-                height: isPortrait ? screenHeight * 0.2 : screenHeight * 0.25, // Adjusted height based on orientation
+                height: isPortrait ? screenHeight * 0.2 : screenHeight * 0.25,
                 child: Card(
                   color: const Color.fromARGB(255, 255, 255, 255),
                   shape: RoundedRectangleBorder(
@@ -193,10 +196,10 @@ class HomePage extends GetView<DashboardController> {
                           'Keterangan Jam Absensi',
                           style: GoogleFonts.roboto(
                             fontWeight: FontWeight.bold,
-                            fontSize: screenHeight * 0.02, // Responsive font size
+                            fontSize: screenHeight * 0.02,
                           ),
                         ),
-                        SizedBox(height: screenHeight * 0.015), // Responsive spacing
+                        SizedBox(height: screenHeight * 0.015),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
                           child: Row(
@@ -222,7 +225,7 @@ class HomePage extends GetView<DashboardController> {
                                     child: Text(
                                       'Check-In',
                                       style: TextStyle(
-                                        fontSize: screenHeight * 0.02, // Responsive font size
+                                        fontSize: screenHeight * 0.02,
                                         color: Colors.white,
                                       ),
                                     ),
@@ -249,7 +252,7 @@ class HomePage extends GetView<DashboardController> {
                                     child: Text(
                                       'Check-Out',
                                       style: TextStyle(
-                                        fontSize: screenHeight * 0.02, // Responsive font size
+                                        fontSize: screenHeight * 0.02,
                                         color: Colors.white,
                                       ),
                                     ),
@@ -266,9 +269,9 @@ class HomePage extends GetView<DashboardController> {
               ),
             ),
             Positioned(
-              top: screenHeight * 0.5, // Responsive position
-              left: screenWidth * 0.1, // Responsive position
-              right: screenWidth * 0.1, // Responsive position
+              top: screenHeight * 0.5,
+              left: screenWidth * 0.1,
+              right: screenWidth * 0.1,
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.black),
@@ -276,82 +279,95 @@ class HomePage extends GetView<DashboardController> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(15.0),
-                  child: Container(
-                    height: screenHeight * 0.35, // Adjusted height based on screen height
-                    color: const Color.fromARGB(255, 247, 245, 245),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(screenHeight * 0.015), // Responsive padding
-                          child: Text(
-                            'Recent Attendance',
-                            style: GoogleFonts.roboto(
-                              fontWeight: FontWeight.bold,
-                              fontSize: screenHeight * 0.015, // Responsive font size
+                  child: Stack(
+                    children: [
+                      Container(
+                        height: screenHeight * 0.35,
+                        color: const Color.fromARGB(255, 247, 245, 245),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.all(screenHeight * 0.015),
+                              child: Text(
+                                'History Absen',
+                                style: GoogleFonts.roboto(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: screenHeight * 0.015,
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Obx(() {
-                            return ListView.builder(
-                              itemCount: controller.listhadir.length,
-                              itemBuilder: (context, index) {
-                                var attendance = controller.listhadir[index];
-        
-                                return Column(
-                                  children: [
-                                    ListTile(
-                                      title: Text(
-                                        attendance['date']!,
-                                        style: TextStyle(
-                                          color: Colors.blue,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: screenHeight * 0.02, // Responsive font size
+                            Expanded(
+                              child: Obx(() {
+                                return ListView.builder(
+                                  itemCount: controller.listhadir.length,  // Update here
+                                  itemBuilder: (context, index) {
+                                    var attendance = controller.listhadir[index];
+
+                                    return Column(
+                                      children: [
+                                        ListTile(
+                                         
+                                          title: Text(
+                                            attendance['date']!,
+                                            style: TextStyle(
+                                              color: Colors.blue,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: screenHeight * 0.02,
+                                            ),
+                                          ),
+                                          subtitle: Column(
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Text('Check-In:', style: TextStyle(fontSize: screenHeight * 0.015)),
+                                                  Expanded(
+                                                    child: Container(
+                                                      alignment: Alignment.centerRight,
+                                                      child: Text(
+                                                        '${attendance['checkIn']}',
+                                                        style: TextStyle(fontSize: screenHeight * 0.015),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Text('Check-Out:', style: TextStyle(fontSize: screenHeight * 0.015)),
+                                                  Expanded(
+                                                    child: Container(
+                                                      alignment: Alignment.centerRight,
+                                                      child: Text(
+                                                        '${attendance['checkOut']}',
+                                                        style: TextStyle(fontSize: screenHeight * 0.015),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      subtitle: Column(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text('Check-In:', style: TextStyle(fontSize: screenHeight * 0.015)),
-                                              Expanded(
-                                                child: Container(
-                                                  alignment: Alignment.centerRight,
-                                                  child: Text(
-                                                    '${attendance['checkIn']}',
-                                                    style: TextStyle(fontSize: screenHeight * 0.015),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            children: [
-                                              Text('Check-Out:', style: TextStyle(fontSize: screenHeight * 0.015)),
-                                              Expanded(
-                                                child: Container(
-                                                  alignment: Alignment.centerRight,
-                                                  child: Text(
-                                                    '${attendance['checkOut']}',
-                                                    style: TextStyle(fontSize: screenHeight * 0.015),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const Divider(),
-                                  ],
+                                        const Divider(),
+                                      ],
+                                    );
+                                  },
                                 );
-                              },
-                            );
-                          }),
+                              }),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: IconButton(
+                          icon: Icon(Icons.refresh, color: Colors.blue),
+                          onPressed: _refreshData,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -360,5 +376,9 @@ class HomePage extends GetView<DashboardController> {
         ),
       ),
     );
+  }
+
+  void _refreshData() {
+    controller.fetchAttendance();
   }
 }

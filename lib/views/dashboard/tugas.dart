@@ -66,7 +66,7 @@ class _TugasPageState extends State<TugasPage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 70),
+              padding: const EdgeInsets.only(top: 40),
               child: Align(
                 alignment: Alignment.topCenter,
                 child: Container(
@@ -84,7 +84,7 @@ class _TugasPageState extends State<TugasPage> {
                     ],
                   ),
                   width: screenWidth * 0.9,
-                  height: screenHeight * 0.81,
+                  height: screenHeight * 0.8,
                   child: RefreshIndicator(
                     onRefresh: _refreshFiles,
                     child: FutureBuilder<List<Map<String, dynamic>>>(

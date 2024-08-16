@@ -111,7 +111,7 @@ class LoginPage extends GetView<AuthController> {
   }
 }
 
-class CustomTextField extends StatelessWidget {
+class CustomTextField extends StatefulWidget {
   final String label;
   final bool obscureText;
   final TextEditingController controller;
@@ -124,23 +124,39 @@ class CustomTextField extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _CustomTextFieldState createState() => _CustomTextFieldState();
+}
+
+class _CustomTextFieldState extends State<CustomTextField> {
+  late bool _obscureText;
+
+  @override
+  void initState() {
+    super.initState();
+    _obscureText = widget.obscureText;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
       child: Container(
-        decoration: BoxDecoration(boxShadow: [
-          BoxShadow(
-            color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.3),
-            spreadRadius: 2,
-            blurRadius: 7,
-            offset: Offset(0, 7),
-          )
-        ], borderRadius: BorderRadius.circular(30)),
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.3),
+              spreadRadius: 2,
+              blurRadius: 7,
+              offset: Offset(0, 7),
+            )
+          ],
+          borderRadius: BorderRadius.circular(30),
+        ),
         child: TextField(
-          controller: controller,
-          obscureText: obscureText,
+          controller: widget.controller,
+          obscureText: _obscureText,
           decoration: InputDecoration(
-            hintText: label,
+            hintText: widget.label,
             fillColor: Colors.white,
             filled: true,
             border: OutlineInputBorder(
@@ -148,6 +164,18 @@ class CustomTextField extends StatelessWidget {
               borderSide: BorderSide.none,
             ),
             contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+            suffixIcon: widget.obscureText
+                ? IconButton(
+                    icon: Icon(
+                      _obscureText ? Icons.visibility_off : Icons.visibility,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscureText = !_obscureText;
+                      });
+                    },
+                  )
+                : null,
           ),
         ),
       ),

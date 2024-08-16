@@ -48,7 +48,7 @@ class _NotifikasiPageState extends State<NotifikasiPage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 70),
+              padding: const EdgeInsets.only(top: 40),
               child: Align(
                 alignment: Alignment.topCenter,
                 child: Container(
@@ -65,7 +65,7 @@ class _NotifikasiPageState extends State<NotifikasiPage> {
                         )
                       ]),
                   width: screenWidth * 0.9, // 90% dari lebar layar
-                  height: screenHeight * 0.81,
+                  height: screenHeight * 0.8,
                   child: RefreshIndicator(
                     onRefresh: _refreshNotifications,
                     child: FutureBuilder<List<Map<String, dynamic>>>(

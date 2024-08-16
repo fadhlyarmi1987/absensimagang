@@ -30,7 +30,7 @@ class _MapPageState extends State<MapPage> {
 
   Location location = Location();
   LatLng? currentLocation;
-  double radius = 20.0; // radius dalam meter
+  double radius = 30.0; // radius dalam meter
 
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   Map<CircleId, Circle> circles = <CircleId, Circle>{};

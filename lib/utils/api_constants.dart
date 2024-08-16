@@ -10,6 +10,8 @@ class ApiConstants {
   //"http://192.168.2.91:8000/api/"; wifikantor
   //192.168.100.20:8000/api/
   //http://192.168.2.95/
+  //http://192.168.2.32:8000
+  //http://103.31.39.244
 
 
   static const String login  = "login";
@@ -19,7 +21,6 @@ class ApiConstants {
   static const String absen = "absen";
   static const String notifications = "notifications";
   static const String file = "files";
-  static const String waktu = "server-time";
   static const String user = "users";
   static String fileDownload(String id) => "files/$id";
 

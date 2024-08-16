@@ -53,6 +53,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
         );
 
         await Future.delayed(Duration(seconds: 2));
+
+        controller.logout();
       } else {
         Get.snackbar(
           'Error',

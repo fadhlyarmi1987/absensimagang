@@ -13,26 +13,6 @@ import 'dashboard.controller.dart';
 class HomePage extends GetView<DashboardController> {
   const HomePage({super.key});
 
-  Future<DateTime?> fetchServerTime() async {
-    try {
-      final response = await http.get(Uri.parse('${ApiConstants.baseUrl}${ApiConstants.waktu}'));
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return DateTime.parse(data['server_time']);
-      } else {
-        print('Failed to load server time: ${response.statusCode}');
-        return null;
-      }
-    } catch (e) {
-      print('Error fetching server time: $e');
-      return null;
-    }
-
-    Future<void> _refreshData() async {
-    await controller.fetchAttendance(); // Call fetchAttendance to refresh data
-  }
-  }
-
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -94,34 +74,26 @@ class HomePage extends GetView<DashboardController> {
                               height: 1.2,
                             ),
                           ),
-                          StreamBuilder<DateTime?>(
-                            stream: Stream.periodic(const Duration(seconds: 1)).asyncMap((_) => fetchServerTime()),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return const Center(child: CircularProgressIndicator());
-                              }
+                          StreamBuilder(
+                          stream: Stream.periodic(Duration(seconds: 1)),
+                          builder: (context, snapshot) {
+                            var now = DateTime.now();
+                            var formattedTime =
+                                DateFormat('HH:mm:ss').format(now);
+                            var formattedDate =
+                                DateFormat('EEEE, dd MMMM yyyy', 'id')
+                                    .format(now);
 
-                              if (snapshot.hasError || !snapshot.hasData) {
-                                return const Center(child: Text('Error fetching time'));
-                              }
-
-                              var location = tz.getLocation('Asia/Jakarta');
-                              var utcTime = snapshot.data!;
-                              var localTime = tz.TZDateTime.from(utcTime, location);
-
-                              var formattedTime = DateFormat('HH:mm:ss').format(localTime);
-                              var formattedDate = DateFormat('EEEE, dd MMMM yyyy', 'id').format(localTime);
-
-                              return Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    formattedTime,
-                                    style: TextStyle(
-                                      fontSize: screenHeight * 0.06,
-                                      color: const Color.fromARGB(255, 255, 255, 255),
-                                    ),
-                                  ),
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  formattedTime,
+                                  style: TextStyle(
+                                      fontSize: 50,
+                                      color:
+                                          Color.fromARGB(255, 255, 255, 255)),
+                                ),
                                   const SizedBox(height: 1),
                                   Text(
                                     formattedDate,
@@ -166,7 +138,7 @@ class HomePage extends GetView<DashboardController> {
                           child: Text(
                             '${controller.name.value}',
                             style: GoogleFonts.greatVibes(
-                                fontSize: 20,
+                                fontSize: 22,
                                 color: Colors.white),
                             textAlign: TextAlign.right,
                           ),

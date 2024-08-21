@@ -3,7 +3,9 @@
 import 'package:absensimagang/data/services/auth.service.dart';
 import 'package:absensimagang/data/services/map.service.dart';
 import 'package:absensimagang/views/maps/map.controller.dart';
+import 'package:absensimagang/views/maps/map2.controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:math';
@@ -98,6 +100,9 @@ class _MapPageState extends State<MapPage> {
       currentLocation = LatLng(locData.latitude!, locData.longitude!);
     });
   }
+
+  // panggil class Map2Controller yang menggunakan extends getxcontroler dengan Get.put(...);
+  Map2Controller map2Controller = Get.put(Map2Controller());
 
   @override
   Widget build(BuildContext context) {
@@ -259,20 +264,46 @@ class _MapPageState extends State<MapPage> {
                                 -7.482906085307217, 112.44929725580936)
                               : LatLng(-7.491750, 112.461981))) {
                           if (selectedOffice == 'Kantor Meri') {
+                            LatLng officeMeriPosition = const LatLng(-7.482906085307217, 112.44929725580936);
                             if (isCheckIn) {
-                              await MapViewModel()
-                                .sendDataToDatabaseMeri(context);
+                              //await MapViewModel().sendDataToDatabaseMeri(context);
+
+                              // panggil fungsi checkIn di Map2Controller
+                              map2Controller.checkIn(
+                                'Meri', 
+                                officeMeriPosition.latitude, 
+                                officeMeriPosition.longitude
+                              );
                             } else {
-                              await MapViewModel()
-                                .sendDataToDatabaseMeriCheckout(context);
+                              //await MapViewModel().sendDataToDatabaseMeriCheckout(context);
+
+                              // panggil fungsi checkOut di Map2Controller
+                              map2Controller.checkOut(
+                                'Meri', 
+                                officeMeriPosition.latitude, 
+                                officeMeriPosition.longitude
+                              );
                             }
                           } else if (selectedOffice == 'Kantor Graha') {
+                            LatLng officeGrahaPosition = const LatLng(-7.491750, 112.461981);
                             if (isCheckIn) {
-                              await MapViewModel()
-                                .sendDataToDatabaseGraha(context);
+                              //await MapViewModel().sendDataToDatabaseGraha(context);
+
+                              // panggil fungsi checkIn di Map2Controller
+                              map2Controller.checkIn(
+                                'Graha', 
+                                officeGrahaPosition.latitude, 
+                                officeGrahaPosition.longitude
+                              );
                             } else {
-                              await MapViewModel()
-                                .sendDataToDatabaseGrahaCheckout(context);
+                              //await MapViewModel().sendDataToDatabaseGrahaCheckout(context);
+
+                              // panggil fungsi checkOut di Map2Controller
+                              map2Controller.checkOut(
+                                'Graha', 
+                                officeGrahaPosition.latitude, 
+                                officeGrahaPosition.longitude
+                              );
                             }
                           }
                         } else {

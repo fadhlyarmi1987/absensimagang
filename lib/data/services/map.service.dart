@@ -10,13 +10,18 @@ import '../providers/api.provider.dart';
 
 class MapViewModel {
   Future<void> sendDataToDatabaseMeri(BuildContext context) async {
+    // kalau hanya memanggil storage tidak perlu await
     String? currentName = await Storage().getName();
+    // kalau officeMeriPosition akan dibuat dibanyak fungsi makan lebih baik ditaruh di luar fungsi ini (sendDataToDatabaseMeri) supaya tidak Boilerpate
     LatLng officeMeriPosition = LatLng(-7.482906085307217, 112.44929725580936);
+    // begitupun juga dengan HttpClient, jika nanti dibuat banyak lebih baik ditaruh di luar fungsi 
     HttpClient httpClient = HttpClient();
 
     final dio = Dio();
     final String apiUrl = '${ApiConstants.baseUrl}${ApiConstants.absen}';
-
+    // noted: kalau sudah menggunakan HttpClient tidak perlu memanggil Dio lagi, karena Dio sudah di set di HttpClient
+    // dan juga untuk url tidak perlu dengan baseUrl nya karena di HttpClient sudah di set baseUrl nya,
+    // jadi cukup `await httpClient.post('absen', data: ....);` atau variable seperti: ApiConstants.absen
     try {
       var response = await httpClient.post(apiUrl, data: {
         'name': currentName,
@@ -26,8 +31,15 @@ class MapViewModel {
         'kantorid': 'Meri'
       });
 
-      if (response.statusCode != 200) {
+      // httpStatusCode 2xx itu success jadi gunakan OR untuk sebuah kondisi
+      if (response.statusCode == 200 || response.statusCode == 201) {
         print('Data berhasil dikirim ke database');
+        // noted:
+        //Jangan menggunakan BuildContext setelah jeda asynchronous (seperti setelah await). 
+        //Flutter memberikan peringatan ini karena BuildContext yang digunakan setelah await mungkin tidak lagi valid. 
+        //Hal ini bisa terjadi jika widget yang terkait dengan BuildContext tersebut telah dihapus dari tree widget atau digantikan oleh widget lain selama operasi asynchronous.
+        //Kenapa tidak boleh menggunakan BuildContext setelah async gaps?
+        //Ketika sebuah operasi asynchronous terjadi (misalnya, ketika Anda menunggu await), ada kemungkinan bahwa framework Flutter dapat menghapus atau menggantikan widget yang terkait dengan BuildContext tersebut. Jika Anda mencoba menggunakan BuildContext yang sudah tidak terkait dengan widget manapun, Anda bisa mendapatkan error atau perilaku tak terduga.
         MapController()
             .showSuccessDialog(context, currentName ?? "", officeMeriPosition);
       } else {
@@ -55,7 +67,7 @@ class MapViewModel {
         'kantorid': 'Graha'
       });
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         print('Data berhasil dikirim ke database');
         MapController()
             .showSuccessDialog(context, currentName ?? "", officeGrahaPosition);
@@ -84,7 +96,7 @@ class MapViewModel {
         'kantorid': 'Meri'
       });
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         print('Data berhasil dikirim ke database');
         MapController()
             .showSuccessDialog(context, currentName ?? "", officeMeriPosition);
@@ -113,7 +125,7 @@ class MapViewModel {
         'kantorid': 'Graha'
       });
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         print('Data berhasil dikirim ke database');
         MapController()
             .showSuccessDialog(context, currentName ?? "", officeGrahaPosition);

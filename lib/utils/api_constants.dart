@@ -4,7 +4,7 @@ import '../views/dashboard/edit.profile.dart';
 class ApiConstants {
   ApiConstants._();
   
-  static const String baseUrl = "http://192.168.2.32:8000/api/";
+  static const String baseUrl = "http://103.31.39.244/api/";
 
   //"http://192.168.64.139:8000/api/"; hotspot
   //"http://192.168.2.91:8000/api/"; wifikantor

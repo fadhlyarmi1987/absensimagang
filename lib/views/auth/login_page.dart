@@ -11,101 +11,109 @@ class LoginPage extends GetView<AuthController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
-      backgroundColor: Color.fromARGB(255, 14, 142, 197),
-      body:  SafeArea(
-        child: Center(
-        
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
-                  ),
-                  child: Image.asset('assets/Logo_Natusi.png', height: 80),
-                ),
-                SizedBox(height: 20),
-                Text(
-                  'LOGIN',
-                  style: TextStyle(
-                    fontSize: 32,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 20),
-                CustomTextField(
-                  label: 'Email/Username',
-                  controller: controller.controllerEmail,
-                ),
-                CustomTextField(
-                  label: 'Password',
-                  obscureText: true,
-                  controller: controller.controllerPassword,
-                ),
-                SizedBox(height: 20),
-                GestureDetector(
-                  onTap: () {
-                    //controller.login();
-                    controller.loginApi();
-                  },
-                  child: Container(
-                    width: 100,
-                    height: 50,
+      body:  Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset('assets/background_auth.jpg',
+            fit: BoxFit.cover
+            ),
+            ),
+            SafeArea(
+          child: Center(
+          
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
                     decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 4, 181, 18),
-                      borderRadius: BorderRadius.circular(100),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.3),
-                          spreadRadius: 1,
-                          blurRadius: 5,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
+                      color: const Color.fromARGB(160, 255, 255, 255),
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
                     ),
+                    child: Image.asset('assets/Logo_Natusi.png', height: 80),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    'LOGIN',
+                    style: TextStyle(
+                      fontSize: 32,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  CustomTextField(
+                    label: 'Email/Username',
+                    controller: controller.controllerEmail,
+                  ),
+                  CustomTextField(
+                    label: 'Password',
+                    obscureText: true,
+                    controller: controller.controllerPassword,
+                  ),
+                  SizedBox(height: 20),
+                  GestureDetector(
+                    onTap: () {
+                      //controller.login();
+                      controller.loginApi();
+                    },
+                    child: Container(
+                      width: 100,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 4, 181, 18),
+                        borderRadius: BorderRadius.circular(100),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.3),
+                            spreadRadius: 1,
+                            blurRadius: 5,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'KIRIM',
+                            style: GoogleFonts.roboto(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 30.0, right: 20),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'KIRIM',
-                          style: GoogleFonts.roboto(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          'Belum punya akun?\nKlik icon disamping untuk mendaftar',
+                          style: TextStyle(color: Colors.white),
+                          textAlign: TextAlign.start,
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.arrow_forward, color: Colors.white),
+                          onPressed: () {
+                            Get.offAllNamed(Routes.register);
+                          },
                         ),
                       ],
                     ),
                   ),
-                ),
-                SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.only(left: 30.0, right: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Belum punya akun?\nKlik icon disamping untuk mendaftar',
-                        style: TextStyle(color: Colors.white),
-                        textAlign: TextAlign.start,
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.arrow_forward, color: Colors.white),
-                        onPressed: () {
-                          Get.offAllNamed(Routes.register);
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
+        ],
+        
       ),
     );
   }

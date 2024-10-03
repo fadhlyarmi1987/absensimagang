@@ -10,124 +10,105 @@ class RegisterPage extends GetView<AuthController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 14, 142, 197),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(20))),
-                  child: Image.asset('assets/Logo_Natusi.png', height: 80)),
-              SizedBox(height: 20),
-              Text('REGISTER',
-                  style: GoogleFonts.roboto(
-                      textStyle: TextStyle(
-                          color: Colors.white,
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold))),
-              SizedBox(height: 20),
-              CustomTextField(
-                  label: 'Nama', controller: controller.controllerNama),
-              CustomTextField(
-                  label: 'Email/Username',
-                  controller: controller.controllerEmail),
-              CustomTextField(
-                  label: 'Password',
-                  obscureText: true,
-                  controller: controller.controllerPassword),
-              CustomTextField(
-                  label: 'Confirm Password',
-                  obscureText: true,
-                  controller: controller.controllerCPassword),
-
-
-              Obx(() => CheckboxListTile(
-                    title: Text('Saya Karyawan',
-                        style: TextStyle(color: Colors.white)),
-                    value: controller.isKaryawan.value,
-                    onChanged: (value) {
-                      controller.isKaryawan.value = value!;
-                      if (value) controller.isMagang.value = false;
-                    },
-                    activeColor: Colors.green,
-                    checkColor: Colors.white,
-                  )),
-              Obx(() => CheckboxListTile(
-                    title: Text('Saya Magang',
-                        style: TextStyle(color: Colors.white)),
-                    value: controller.isMagang.value,
-                    onChanged: (value) {
-                      controller.isMagang.value = value!;
-                      if (value) controller.isKaryawan.value = false;
-                    },
-                    activeColor: Colors.green,
-                    checkColor: Colors.white,
-                  )),
-
-              SizedBox(height: 20),
-              GestureDetector(
-                onTap: () {
-                  //controller.register();
-                  controller.registerApi();
-                },
-                child: Container(
-                  width: 140,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.green,
-                    borderRadius: BorderRadius.circular(100),
-                    boxShadow: [
-                      BoxShadow(
-                        color:
-                            const Color.fromARGB(255, 0, 0, 0).withOpacity(0.3),
-                        spreadRadius: 1,
-                        blurRadius: 5,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Daftar',
-                        style: GoogleFonts.roboto(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.only(left: 30.0, right: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Sudah punya akun?\nKlik icon disamping untuk login',
-                      style: TextStyle(color: Colors.white),
-                      textAlign: TextAlign.start,
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.arrow_forward, color: Colors.white),
-                      onPressed: () {
-                        //Navigator.pop(context);
-                        Get.toNamed(Routes.init);
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ],
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset('assets/background_auth.jpg', fit: BoxFit.cover),
           ),
-        ),
+          Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                      decoration: BoxDecoration(
+                          color: const Color.fromARGB(160, 255, 255, 255),
+                          borderRadius: BorderRadius.all(Radius.circular(20))),
+                      child: Image.asset('assets/Logo_Natusi.png', height: 80)),
+                  SizedBox(height: 20),
+                  Text('REGISTER',
+                      style: GoogleFonts.roboto(
+                          textStyle: TextStyle(
+                              color: Colors.white,
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold))),
+                  SizedBox(height: 20),
+                  CustomTextField(
+                      label: 'Nama', controller: controller.controllerNama),
+                  CustomTextField(
+                      label: 'Email/Username',
+                      controller: controller.controllerEmail),
+                  CustomTextField(
+                      label: 'Password',
+                      obscureText: true,
+                      controller: controller.controllerPassword),
+                  CustomTextField(
+                      label: 'Confirm Password',
+                      obscureText: true,
+                      controller: controller.controllerCPassword),
+                  SizedBox(height: 20),
+                  GestureDetector(
+                    onTap: () {
+                      //controller.register();
+                      controller.registerApi();
+                    },
+                    child: Container(
+                      width: 140,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(100),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color.fromARGB(255, 0, 0, 0)
+                                .withOpacity(0.3),
+                            spreadRadius: 1,
+                            blurRadius: 5,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Daftar',
+                            style: GoogleFonts.roboto(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 30.0, right: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Sudah punya akun?\nKlik icon disamping untuk login',
+                          style: TextStyle(color: Colors.white),
+                          textAlign: TextAlign.start,
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.arrow_forward, color: Colors.white),
+                          onPressed: () {
+                            //Navigator.pop(context);
+                            Get.toNamed(Routes.init);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

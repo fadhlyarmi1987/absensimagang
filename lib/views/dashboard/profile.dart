@@ -17,14 +17,14 @@ class ProfilePage extends StatelessWidget {
           children: [
             Container(
               decoration: const BoxDecoration(
-                gradient: RadialGradient(
-                  center: Alignment(0, -1),
-                  stops: [0.3, 0.7],
-                  radius: 1.5,
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                   colors: [
-                    Color(0xFFC1BCBC),
-                    Color(0xFF0E8EC5),
+                    Color.fromARGB(255, 235, 6, 6),
+                    Colors.white,
                   ],
+                  stops: [0.06, 0.54],
                 ),
               ),
             ),
@@ -57,7 +57,7 @@ class ProfilePage extends StatelessWidget {
                           width: double.infinity,
                           height: 60,
                           child: Card(
-                            color: Colors.white,
+                            color: const Color.fromARGB(255, 217, 217, 217),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15),
                             ),
@@ -83,7 +83,7 @@ class ProfilePage extends StatelessWidget {
                           width: double.infinity,
                           height: 60,
                           child: Card(
-                            color: Colors.white,
+                            color: const Color.fromARGB(255, 217, 217, 217),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15),
                             ),

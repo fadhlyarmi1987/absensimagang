@@ -4,14 +4,9 @@ import '../views/dashboard/edit.profile.dart';
 class ApiConstants {
   ApiConstants._();
   
-  static const String baseUrl = "http://103.31.39.244/api/";
+  static const String baseUrl = "http://172.16.99.171:8000/api/";
 
-  //"http://192.168.64.139:8000/api/"; hotspot
-  //"http://192.168.2.91:8000/api/"; wifikantor
-  //192.168.100.20:8000/api/
-  //http://192.168.2.95/
-  //http://192.168.2.32:8000
-  //http://103.31.39.244
+  //192.168.1.7 wifi kontrakan
 
 
   static const String login  = "login";

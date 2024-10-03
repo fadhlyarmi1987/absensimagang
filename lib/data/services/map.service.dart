@@ -13,7 +13,7 @@ class MapViewModel {
     // kalau hanya memanggil storage tidak perlu await
     String? currentName = await Storage().getName();
     // kalau officeMeriPosition akan dibuat dibanyak fungsi makan lebih baik ditaruh di luar fungsi ini (sendDataToDatabaseMeri) supaya tidak Boilerpate
-    LatLng officeMeriPosition = LatLng(-7.482906085307217, 112.44929725580936);
+    LatLng officeMeriPosition = LatLng(-7.921121, 112.599286);
     // begitupun juga dengan HttpClient, jika nanti dibuat banyak lebih baik ditaruh di luar fungsi 
     HttpClient httpClient = HttpClient();
 
@@ -28,7 +28,7 @@ class MapViewModel {
         'typetime': 'checkin',
         'latitude': officeMeriPosition.latitude,
         'longitude': officeMeriPosition.longitude,
-        'kantorid': 'Meri'
+        'kantorid': 'Lab'
       });
 
       // httpStatusCode 2xx itu success jadi gunakan OR untuk sebuah kondisi
@@ -52,7 +52,7 @@ class MapViewModel {
 
   Future<void> sendDataToDatabaseGraha(BuildContext context) async {
     String? currentName = await Storage().getName();
-    LatLng officeGrahaPosition = LatLng(-7.491750, 112.461981);
+    LatLng officeGrahaPosition = LatLng(-7.920520, 112.596965);
     HttpClient httpClient = HttpClient();
 
     final dio = Dio();
@@ -64,7 +64,7 @@ class MapViewModel {
         'typetime': 'checkin',
         'latitude': officeGrahaPosition.latitude,
         'longitude': officeGrahaPosition.longitude,
-        'kantorid': 'Graha'
+        'kantorid': 'Perpustakaan'
       });
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -81,7 +81,7 @@ class MapViewModel {
 
   Future<void> sendDataToDatabaseMeriCheckout(BuildContext context) async {
     String? currentName = await Storage().getName();
-    LatLng officeMeriPosition = LatLng(-7.482906085307217, 112.44929725580936);
+    LatLng officeMeriPosition = LatLng(-7.921121, 112.599286);
     HttpClient httpClient = HttpClient();
 
     final dio = Dio();
@@ -93,7 +93,7 @@ class MapViewModel {
         'typetime': 'checkout',
         'latitude': officeMeriPosition.latitude,
         'longitude': officeMeriPosition.longitude,
-        'kantorid': 'Meri'
+        'kantorid': 'Lab'
       });
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -110,7 +110,7 @@ class MapViewModel {
 
   Future<void> sendDataToDatabaseGrahaCheckout(BuildContext context) async {
     String? currentName = await Storage().getName();
-    LatLng officeGrahaPosition = LatLng(-7.491750, 112.461981);
+    LatLng officeGrahaPosition = LatLng(-7.920520, 112.596965);
     HttpClient httpClient = HttpClient();
 
     final dio = Dio();
@@ -122,7 +122,7 @@ class MapViewModel {
         'typetime': 'checkout',
         'latitude': officeGrahaPosition.latitude,
         'longitude': officeGrahaPosition.longitude,
-        'kantorid': 'Graha'
+        'kantorid': 'Perpustakaan'
       });
 
       if (response.statusCode == 200 || response.statusCode == 201) {

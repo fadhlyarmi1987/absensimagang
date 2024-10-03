@@ -112,9 +112,9 @@ class AuthController extends GetxController {
       errors.add('Password dan konfirmasi password tidak cocok');
     }
 
-    if (isKaryawan.value == isMagang.value) {
-      errors.add('Anda belum memilih Karyawan atau Magang');
-    }
+    // if (isKaryawan.value == isMagang.value) {
+    //   errors.add('Anda belum memilih Karyawan atau Magang');
+    // }
 
     if (errors.isNotEmpty) {
       showSnackbar('Kesalahan', errors.join('\n'), Colors.red, Colors.white,

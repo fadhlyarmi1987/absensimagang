@@ -26,13 +26,13 @@ class _MapPageState extends State<MapPage> {
   late GoogleMapController mapController;
   String selectedOffice = '';
   final LatLng _center =
-      const LatLng(-7.491926, 112.456411); // Koordinat Jakarta
+      const LatLng(-7.921048, 112.597329); // Koordinat Kampus
   final MapViewModel mapViewModelInstance =
       MapViewModel(); // ViewModel instance
 
   Location location = Location();
   LatLng? currentLocation;
-  double radius = 100.0; // radius dalam meter
+  double radius = 50.0; // radius dalam meter
 
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   Map<CircleId, Circle> circles = <CircleId, Circle>{};
@@ -43,16 +43,16 @@ class _MapPageState extends State<MapPage> {
 
   void _add() {
     final marker1 = Marker(
-      markerId: MarkerId('Meri'),
-      position: LatLng(-7.482906085307217, 112.44929725580936),
+      markerId: MarkerId('Lab'),
+      position: LatLng(-7.921121, 112.599286),
       onTap: () {
         _showModalBottomSheet(context, 'Kantor Meri', isCheckIn: widget.isCheckIn);
       },
     );
 
     final marker2 = Marker(
-      markerId: MarkerId('Graha'),
-      position: LatLng(-7.491750, 112.461981),
+      markerId: MarkerId('Perpustakaan'),
+      position: LatLng(-7.920520, 112.596965),
       onTap: () {
         _showModalBottomSheet(context, 'Kantor Graha', isCheckIn: widget.isCheckIn);
       },
@@ -60,7 +60,7 @@ class _MapPageState extends State<MapPage> {
 
     final circle1 = Circle(
       circleId: CircleId('MeriCircle'),
-      center: LatLng(-7.482906085307217, 112.44929725580936),
+      center: LatLng(-7.921121, 112.599286),
       radius: radius,
       strokeColor: Colors.blue,
       strokeWidth: 2,
@@ -69,7 +69,7 @@ class _MapPageState extends State<MapPage> {
 
     final circle2 = Circle(
       circleId: CircleId('GrahaCircle'),
-      center: LatLng(-7.491750, 112.461981),
+      center: LatLng(-7.920520, 112.596965),
       radius: radius,
       strokeColor: Colors.blue,
       strokeWidth: 2,
@@ -77,8 +77,8 @@ class _MapPageState extends State<MapPage> {
     );
 
     setState(() {
-      markers[MarkerId('Meri')] = marker1;
-      markers[MarkerId('Graha')] = marker2;
+      markers[MarkerId('Lab')] = marker1;
+      markers[MarkerId('Perpustakaan')] = marker2;
       circles[CircleId('MeriCircle')] = circle1;
       circles[CircleId('GrahaCircle')] = circle2;
     });
@@ -170,7 +170,7 @@ class _MapPageState extends State<MapPage> {
                               )
                             )
                           ),
-                          child: Text('Kantor Meri')
+                          child: Text('Lab')
                         ),
                       ),
                     ),
@@ -186,7 +186,7 @@ class _MapPageState extends State<MapPage> {
                               ),
                             ),
                           ),
-                          child: Text('Kantor Graha'),
+                          child: Text('Perpustakaan'),
                         ),
                       ),
                     ),
@@ -199,7 +199,7 @@ class _MapPageState extends State<MapPage> {
                       mapController.animateCamera(
                         CameraUpdate.newCameraPosition(
                           CameraPosition(
-                            target: LatLng(-7.482906085307217, 112.44929725580936),
+                            target: LatLng(-7.921121, 112.599286),
                             zoom: 19.0,
                           ),
                         ),
@@ -208,7 +208,7 @@ class _MapPageState extends State<MapPage> {
                       mapController.animateCamera(
                         CameraUpdate.newCameraPosition(
                           CameraPosition(
-                            target: LatLng(-7.491750, 112.461981),
+                            target: LatLng(-7.920520, 112.596965),
                             zoom: 19.0,
                           ),
                         ),
@@ -261,16 +261,16 @@ class _MapPageState extends State<MapPage> {
                             currentLocation!,
                             selectedOffice == 'Kantor Meri'
                               ? LatLng(
-                                -7.482906085307217, 112.44929725580936)
-                              : LatLng(-7.491750, 112.461981))) {
+                                -7.921121, 112.599286)
+                              : LatLng(-7.920520, 112.596965))) {
                           if (selectedOffice == 'Kantor Meri') {
-                            LatLng officeMeriPosition = const LatLng(-7.482906085307217, 112.44929725580936);
+                            LatLng officeMeriPosition = const LatLng(-7.921121, 112.599286);
                             if (isCheckIn) {
                               //await MapViewModel().sendDataToDatabaseMeri(context);
 
                               // panggil fungsi checkIn di Map2Controller
                               map2Controller.checkIn(
-                                'Meri', 
+                                'Lab', 
                                 officeMeriPosition.latitude, 
                                 officeMeriPosition.longitude
                               );
@@ -279,19 +279,19 @@ class _MapPageState extends State<MapPage> {
 
                               // panggil fungsi checkOut di Map2Controller
                               map2Controller.checkOut(
-                                'Meri', 
+                                'Lab', 
                                 officeMeriPosition.latitude, 
                                 officeMeriPosition.longitude
                               );
                             }
                           } else if (selectedOffice == 'Kantor Graha') {
-                            LatLng officeGrahaPosition = const LatLng(-7.491750, 112.461981);
+                            LatLng officeGrahaPosition = const LatLng(-7.920520, 112.596965);
                             if (isCheckIn) {
                               //await MapViewModel().sendDataToDatabaseGraha(context);
 
                               // panggil fungsi checkIn di Map2Controller
                               map2Controller.checkIn(
-                                'Graha', 
+                                'Perpustakaan', 
                                 officeGrahaPosition.latitude, 
                                 officeGrahaPosition.longitude
                               );
@@ -300,7 +300,7 @@ class _MapPageState extends State<MapPage> {
 
                               // panggil fungsi checkOut di Map2Controller
                               map2Controller.checkOut(
-                                'Graha', 
+                                'Perpustakaan', 
                                 officeGrahaPosition.latitude, 
                                 officeGrahaPosition.longitude
                               );

@@ -30,10 +30,10 @@ class HomePage extends GetView<DashboardController> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Color.fromARGB(255, 14, 142, 197),
+                    Color.fromARGB(255, 235, 6, 6),
                     Colors.white,
                   ],
-                  stops: [0.39, 0.39],
+                  stops: [0.06, 0.54],
                 ),
               ),
               child: SizedBox(
@@ -55,8 +55,8 @@ class HomePage extends GetView<DashboardController> {
                         ),
                         child: SizedBox(
                           height: screenHeight * 0.06,
-                          width: screenWidth * 0.4,
-                          child: Image.asset("assets/Logo_Natusi.png"),
+                          width: screenWidth * 0.42,
+                          child: Image.asset("assets/Logo_Natusi.png",),
                         ),
                       ),
                     ),
@@ -138,7 +138,7 @@ class HomePage extends GetView<DashboardController> {
                           child: Text(
                             '${controller.name.value}',
                             style: GoogleFonts.greatVibes(
-                                fontSize: 22,
+                                fontSize: 18,
                                 color: Colors.white),
                             textAlign: TextAlign.right,
                           ),
@@ -160,6 +160,8 @@ class HomePage extends GetView<DashboardController> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0),
                   ),
+                  elevation: 5.0,
+                  shadowColor: Colors.black.withOpacity(0.5),
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,

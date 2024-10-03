@@ -54,14 +54,14 @@ class _TugasPageState extends State<TugasPage> {
           children: [
             Container(
               decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: Alignment(0, -1),
-                  stops: [0.3, 0.7],
-                  radius: 1.5,
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                   colors: [
-                    const Color.fromARGB(255, 193, 188, 188),
-                    const Color.fromARGB(255, 14, 142, 197),
+                    Color.fromARGB(255, 235, 6, 6),
+                    Colors.white,
                   ],
+                  stops: [0.06, 0.54],
                 ),
               ),
             ),

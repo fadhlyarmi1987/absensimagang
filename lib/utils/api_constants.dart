@@ -4,7 +4,7 @@ import '../views/dashboard/edit.profile.dart';
 class ApiConstants {
   ApiConstants._();
   
-  static const String baseUrl = "http://172.16.99.171:8000/api/";
+  static const String baseUrl = "http://192.168.1.6:8000/api/";
 
   //192.168.1.7 wifi kontrakan
 

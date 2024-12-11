@@ -61,7 +61,7 @@ class LoginPage extends GetView<AuthController> {
                       width: 100,
                       height: 50,
                       decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 4, 181, 18),
+                        color: Colors.green,
                         borderRadius: BorderRadius.circular(100),
                         boxShadow: [
                           BoxShadow(

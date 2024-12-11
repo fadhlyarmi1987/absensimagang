@@ -92,10 +92,6 @@ class AuthController extends GetxController {
   bool checkRegister() {
     List<String> errors = [];
 
-    if (controllerNama.text.isEmpty) {
-      errors.add('Nama harus diisi');
-    }
-
     if (controllerEmail.text.isEmpty) {
       errors.add('Email harus diisi');
     } else if (!controllerEmail.text.contains('@')) {
@@ -105,21 +101,19 @@ class AuthController extends GetxController {
     if (controllerPassword.text.isEmpty) {
       errors.add('Password harus diisi');
     } else if (controllerPassword.text.length < 8) {
-      errors.add('Password harus lebih dari 8 karakter');
+      errors.add('Password harus >=8 karakter');
     }
 
     if (controllerPassword.text != controllerCPassword.text) {
       errors.add('Password dan konfirmasi password tidak cocok');
     }
-
-    if (isKaryawan.value == isMagang.value) {
-      errors.add('Anda belum memilih Karyawan atau Magang');
-    }
-
     if (errors.isNotEmpty) {
       showSnackbar('Kesalahan', errors.join('\n'), Colors.red, Colors.white,
           const Duration(seconds: 2), SnackPosition.BOTTOM);
       return false;
+    }
+     if (controllerNama.text.isEmpty) {
+      errors.add('Nama harus diisi');
     }
     return true;
   }

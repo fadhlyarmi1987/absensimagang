@@ -65,7 +65,7 @@ class AuthService {
 
   Future<List<Attended>> ListAbsen(Map<String, dynamic> data) async {
     try {
-      dio.Response response = await httpClient.get(ApiConstants.listabsen);
+      dio.Response response = await httpClient.get(ApiConstants.listAbsen);
       var responseBody = response.data;
       if (responseBody['metaData']['code'] == 200) {
         return responseBody.data;

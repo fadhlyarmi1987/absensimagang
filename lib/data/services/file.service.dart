@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';  // Paket izin akses
 import 'dart:io';
 
@@ -9,7 +8,7 @@ class FileService {
   final Dio _dio = Dio();
 
   Future<List<Map<String, dynamic>>> fetchFiles() async {
-    final String apiUrl = '${ApiConstants.baseUrl}${ApiConstants.file}';
+    final String apiUrl = '${ApiConstants.baseUrl}${ApiConstants.files}';
     final response = await _dio.get(apiUrl);
 
     if (response.statusCode == 200) {

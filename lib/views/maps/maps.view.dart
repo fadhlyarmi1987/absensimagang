@@ -52,7 +52,7 @@ class _MapPageState extends State<MapPage> {
 
     final marker2 = Marker(
       markerId: MarkerId('Perpustakaan'),
-      position: LatLng(-7.920520, 112.596965),
+      position: LatLng(-7.931114, 112.591219),
       onTap: () {
         _showModalBottomSheet(context, 'Kantor Graha', isCheckIn: widget.isCheckIn);
       },
@@ -69,7 +69,7 @@ class _MapPageState extends State<MapPage> {
 
     final circle2 = Circle(
       circleId: CircleId('GrahaCircle'),
-      center: LatLng(-7.920520, 112.596965),
+      center: LatLng(-7.931114, 112.591219),
       radius: radius,
       strokeColor: Colors.blue,
       strokeWidth: 2,
@@ -208,7 +208,7 @@ class _MapPageState extends State<MapPage> {
                       mapController.animateCamera(
                         CameraUpdate.newCameraPosition(
                           CameraPosition(
-                            target: LatLng(-7.920520, 112.596965),
+                            target: LatLng(-7.931114, 112.591219),
                             zoom: 19.0,
                           ),
                         ),
@@ -262,7 +262,7 @@ class _MapPageState extends State<MapPage> {
                             selectedOffice == 'Kantor Meri'
                               ? LatLng(
                                 -7.921121, 112.599286)
-                              : LatLng(-7.920520, 112.596965))) {
+                              : LatLng(-7.931114, 112.591219))) {
                           if (selectedOffice == 'Kantor Meri') {
                             LatLng officeMeriPosition = const LatLng(-7.921121, 112.599286);
                             if (isCheckIn) {

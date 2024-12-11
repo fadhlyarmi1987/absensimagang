@@ -31,7 +31,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Future<void> _updateProfile() async {
     try {
       final response = await Dio().put(
-        '${ApiConstants.baseUrl}${ApiConstants.user}/$userId',
+        '${ApiConstants.baseUrl}${ApiConstants.users}/$userId',
         data: {
           'id': storage.getId(),
           'name': _nameController.text,

@@ -1,4 +1,4 @@
-import 'package:absensimagang/views/auth/auth.controller.dart';
+import 'package:absensimagang/controller/auth.controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../route/page.dart';
@@ -50,7 +50,7 @@ class RegisterPage extends GetView<AuthController> {
                   GestureDetector(
                     onTap: () {
                       //controller.register();
-                      controller.registerApi();
+                      controller.registerWithFirebase();
                     },
                     child: Container(
                       width: 140,

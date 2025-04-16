@@ -4,8 +4,11 @@ import 'package:get_storage/get_storage.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:get/get.dart';
 import 'package:timezone/data/latest.dart' as tz;
+import 'package:firebase_core/firebase_core.dart'; // Tambahkan ini
 
-void main () async {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); 
+  await Firebase.initializeApp();
   tz.initializeTimeZones();
   initializeDateFormatting('id', null);
   await GetStorage.init();
@@ -18,11 +21,10 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Natusi Login/Registration',
-      locale: Locale('id','ID'),
+      locale: Locale('id', 'ID'),
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      
       initialRoute: '/Splash',
       getPages: pages,
     );

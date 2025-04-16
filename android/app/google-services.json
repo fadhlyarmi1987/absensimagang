@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "509464820324",
+    "project_id": "absensikaryawan2-1db14",
+    "storage_bucket": "absensikaryawan2-1db14.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:509464820324:android:bdf2bc6b14e7a2e958bd71",
+        "android_client_info": {
+          "package_name": "com.example.absensi3"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvNbe4813MVbP_EjV0lthC2V7Kqqs4TSQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:509464820324:android:58fa70d1f72edaf758bd71",
+        "android_client_info": {
+          "package_name": "com.example.absensimagang"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvNbe4813MVbP_EjV0lthC2V7Kqqs4TSQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

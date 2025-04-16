@@ -3,7 +3,7 @@ import 'package:absensimagang/utils/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
-import 'dashboard.controller.dart';
+import '../../controller/dashboard.controller.dart';
 
 class EditProfilePage extends StatefulWidget {
   @override
@@ -31,7 +31,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Future<void> _updateProfile() async {
     try {
       final response = await Dio().put(
-        '${ApiConstants.baseUrl}${ApiConstants.users}/$userId',
+        '${ApiConstants.users}/$userId',
         data: {
           'id': storage.getId(),
           'name': _nameController.text,

@@ -1,8 +1,8 @@
+import 'package:absensimagang/views/Admin/admin_dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../route/page.dart';
-import '../views/auth/auth.controller.dart';
-import '../views/dashboard/home.dart'; 
+import '../controller/auth.controller.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -19,9 +19,17 @@ class _SplashScreenState extends State<SplashScreen> {
 
     Future.delayed(Duration(milliseconds: 3000), () {
       bool isLogin = Get.find<AuthController>().isLogin;
+      String userType = Get.find<AuthController>().userType.value;
+
       if (isLogin) {
-        Get.offNamed(Routes.dahsboard);
+        // Jika sudah login, arahkan ke halaman berdasarkan user_type
+        if (userType == 'karyawan') {
+          Get.offNamed(Routes.dahsboard); 
+        } else if (userType == 'admin') {
+          Get.to(AdminDashboard());
+        }
       } else {
+        // Jika belum login, arahkan ke halaman login
         Get.offNamed(Routes.init);
       }
     });

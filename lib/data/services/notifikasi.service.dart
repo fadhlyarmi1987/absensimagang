@@ -1,25 +1,26 @@
-import 'package:dio/dio.dart';
-import '../../utils/api_constants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NotificationService {
-  final Dio _dio = Dio();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<List<Map<String, dynamic>>> fetchNotifications() async {
     try {
-      final String apiUrl = '${ApiConstants.baseUrl}${ApiConstants.notifications}';
-      final response = await _dio.get(apiUrl);
+      QuerySnapshot snapshot = await _firestore
+          .collection('notif_admin') 
+          .orderBy('timestamp', descending: true) 
+          .limit(15) 
+          .get();
 
-      if (response.statusCode == 200) {
-        List<dynamic> data = response.data;
-        return data.map((item) => {
-          'pengumuman': item['pengumuman'] as String,
-          'created_at': item['created_at'] as String,
-        }).toList();
-      } else {
-        throw Exception('Failed to load notifications');
-      }
+      return snapshot.docs.map((doc) {
+        return {
+          'judul': doc['message'] ?? 'Tanpa Judul', 
+          'isi': doc['title'] ?? 'Tidak ada isi', 
+          'created_at': (doc['timestamp'] as Timestamp).toDate().toIso8601String(),
+        };
+      }).toList();
     } catch (e) {
-      throw Exception('Failed to load notifications: $e');
+      print('Error fetching notifications: $e');
+      return [];
     }
   }
 }

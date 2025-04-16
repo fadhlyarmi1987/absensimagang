@@ -31,6 +31,7 @@ class _NotifikasiPageState extends State<NotifikasiPage> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      
       body: SafeArea(
         child: Stack(
           children: [
@@ -48,7 +49,7 @@ class _NotifikasiPageState extends State<NotifikasiPage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 40),
+              padding: const EdgeInsets.only(top: 20),
               child: Align(
                 alignment: Alignment.topCenter,
                 child: Container(
@@ -57,14 +58,13 @@ class _NotifikasiPageState extends State<NotifikasiPage> {
                       borderRadius: BorderRadius.circular(5),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color.fromARGB(255, 0, 0, 0)
-                              .withOpacity(0.3),
+                          color: Colors.black.withOpacity(0.3),
                           spreadRadius: 2,
                           blurRadius: 7,
                           offset: Offset(0, 7),
                         )
                       ]),
-                  width: screenWidth * 0.9, // 90% dari lebar layar
+                  width: screenWidth * 0.9, 
                   height: screenHeight * 0.8,
                   child: RefreshIndicator(
                     onRefresh: _refreshNotifications,
@@ -83,40 +83,47 @@ class _NotifikasiPageState extends State<NotifikasiPage> {
                             itemCount: itemCount,
                             itemBuilder: (context, index) {
                               final notification = snapshot.data![index];
-                              final pengumuman = notification['pengumuman'];
+                              final judul = notification['judul']; // Ambil judul dari message
+                              final isi = notification['isi']; // Ambil isi dari title
                               final createdAt = notification['created_at'];
                               final formattedDate =
                                   DateFormat('dd MMM yyyy : HH:mm')
                                       .format(DateTime.parse(createdAt));
 
                               return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 0.0),
+                                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10),
                                 child: Card(
                                   elevation: 4,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(5),
                                   ),
                                   child: Padding(
-                                    padding: const EdgeInsets.all(10),
+                                    padding: const EdgeInsets.all(12),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          pengumuman,
+                                          judul,
                                           style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w500,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                         SizedBox(height: 5),
+                                        Text(
+                                          isi,
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        SizedBox(height: 10),
                                         Align(
                                           alignment: Alignment.centerRight,
                                           child: Text(
                                             formattedDate,
                                             style: TextStyle(
-                                              fontSize: 9,
+                                              fontSize: 10,
                                               color: Colors.grey[600],
                                             ),
                                           ),

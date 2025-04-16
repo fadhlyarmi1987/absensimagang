@@ -1,6 +1,6 @@
-import 'package:absensimagang/views/dashboard/dashboard.controller.dart';
+import 'package:absensimagang/controller/dashboard.controller.dart';
 import 'package:absensimagang/views/dashboard/home.dart';
-import 'package:absensimagang/views/dashboard/tugas.dart';
+import 'package:absensimagang/views/dashboard/izin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,7 +19,7 @@ class DashboardPage extends GetView<DashboardController> {
     return [
       HomePage(),
       NotifikasiPage(),
-      TugasPage(),
+      IzinPage(),
       ProfilePage(),
     ];
   }
@@ -54,15 +54,15 @@ class DashboardPage extends GetView<DashboardController> {
         ),
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(CupertinoIcons.book),
-        title: ("Tugas"),
+        icon: Icon(CupertinoIcons.pencil),
+        title: ("Izin"),
         activeColorPrimary: CupertinoColors.activeBlue,
         inactiveColorPrimary: CupertinoColors.systemGrey,
         routeAndNavigatorSettings: RouteAndNavigatorSettings(
           initialRoute: "/",
           routes: {
             "/first": (final context) => const HomePage(),
-            "/second": (final context) => const TugasPage(),
+            "/second": (final context) => const IzinPage(),
           },
         ),
       ),

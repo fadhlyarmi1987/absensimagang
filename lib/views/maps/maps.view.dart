@@ -3,7 +3,7 @@
 import 'package:absensimagang/data/services/auth.service.dart';
 import 'package:absensimagang/data/services/map.service.dart';
 import 'package:absensimagang/views/maps/map.controller.dart';
-import 'package:absensimagang/views/maps/map2.controller.dart';
+import 'package:absensimagang/controller/map2.controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -32,7 +32,7 @@ class _MapPageState extends State<MapPage> {
 
   Location location = Location();
   LatLng? currentLocation;
-  double radius = 50.0; // radius dalam meter
+  double radius = 40.0; // radius dalam meter
 
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   Map<CircleId, Circle> circles = <CircleId, Circle>{};
@@ -46,15 +46,15 @@ class _MapPageState extends State<MapPage> {
       markerId: MarkerId('Lab'),
       position: LatLng(-7.921121, 112.599286),
       onTap: () {
-        _showModalBottomSheet(context, 'Kantor Meri', isCheckIn: widget.isCheckIn);
+        _showModalBottomSheet(context, 'Lab', isCheckIn: widget.isCheckIn);
       },
     );
 
     final marker2 = Marker(
-      markerId: MarkerId('Perpustakaan'),
-      position: LatLng(-7.931114, 112.591219),
+      markerId: MarkerId('Kontrakan'),
+      position: LatLng(-7.993497, 112.637382),
       onTap: () {
-        _showModalBottomSheet(context, 'Kantor Graha', isCheckIn: widget.isCheckIn);
+        _showModalBottomSheet(context, 'Kontrakan', isCheckIn: widget.isCheckIn);
       },
     );
 
@@ -69,7 +69,7 @@ class _MapPageState extends State<MapPage> {
 
     final circle2 = Circle(
       circleId: CircleId('GrahaCircle'),
-      center: LatLng(-7.931114, 112.591219),
+      center: LatLng(-7.993497, 112.637382),
       radius: radius,
       strokeColor: Colors.blue,
       strokeWidth: 2,
@@ -159,7 +159,7 @@ class _MapPageState extends State<MapPage> {
                   hint: Text('Pilih Kantor'),
                   items: [
                     DropdownMenuItem(
-                      value: 'Kantor Meri',
+                      value: 'Lab',
                       child: Center(
                         child: Container(
                           decoration: BoxDecoration(
@@ -175,7 +175,7 @@ class _MapPageState extends State<MapPage> {
                       ),
                     ),
                     DropdownMenuItem(
-                      value: 'Kantor Graha',
+                      value: 'Kontrakan',
                       child: Center(
                         child: Container(
                           decoration: BoxDecoration(
@@ -186,7 +186,7 @@ class _MapPageState extends State<MapPage> {
                               ),
                             ),
                           ),
-                          child: Text('Perpustakaan'),
+                          child: Text('Kontrakan'),
                         ),
                       ),
                     ),
@@ -195,7 +195,7 @@ class _MapPageState extends State<MapPage> {
                     setState(() {
                       selectedOffice = value!;
                     });
-                    if (value == 'Kantor Meri') {
+                    if (value == 'Lab') {
                       mapController.animateCamera(
                         CameraUpdate.newCameraPosition(
                           CameraPosition(
@@ -204,11 +204,11 @@ class _MapPageState extends State<MapPage> {
                           ),
                         ),
                       );
-                    } else if (value == 'Kantor Graha') {
+                    } else if (value == 'Kontrakan') {
                       mapController.animateCamera(
                         CameraUpdate.newCameraPosition(
                           CameraPosition(
-                            target: LatLng(-7.931114, 112.591219),
+                            target: LatLng(-7.993497, 112.637382),
                             zoom: 19.0,
                           ),
                         ),
@@ -259,11 +259,11 @@ class _MapPageState extends State<MapPage> {
                         if (currentLocation != null &&
                           _isWithinRadius(
                             currentLocation!,
-                            selectedOffice == 'Kantor Meri'
+                            selectedOffice == 'Lab'
                               ? LatLng(
                                 -7.921121, 112.599286)
-                              : LatLng(-7.931114, 112.591219))) {
-                          if (selectedOffice == 'Kantor Meri') {
+                              : LatLng(-7.993497, 112.637382))) {
+                          if (selectedOffice == 'Lab') {
                             LatLng officeMeriPosition = const LatLng(-7.921121, 112.599286);
                             if (isCheckIn) {
                               //await MapViewModel().sendDataToDatabaseMeri(context);
@@ -284,14 +284,14 @@ class _MapPageState extends State<MapPage> {
                                 officeMeriPosition.longitude
                               );
                             }
-                          } else if (selectedOffice == 'Kantor Graha') {
-                            LatLng officeGrahaPosition = const LatLng(-7.920520, 112.596965);
+                          } else if (selectedOffice == 'Kontrakan') {
+                            LatLng officeGrahaPosition = const LatLng(-7.993497, 112.637382);
                             if (isCheckIn) {
                               //await MapViewModel().sendDataToDatabaseGraha(context);
 
                               // panggil fungsi checkIn di Map2Controller
                               map2Controller.checkIn(
-                                'Perpustakaan', 
+                                'Kontrakan', 
                                 officeGrahaPosition.latitude, 
                                 officeGrahaPosition.longitude
                               );
@@ -300,7 +300,7 @@ class _MapPageState extends State<MapPage> {
 
                               // panggil fungsi checkOut di Map2Controller
                               map2Controller.checkOut(
-                                'Perpustakaan', 
+                                'Kontrakan', 
                                 officeGrahaPosition.latitude, 
                                 officeGrahaPosition.longitude
                               );

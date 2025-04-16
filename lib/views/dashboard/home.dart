@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../maps/maps.view.dart';
-import 'dashboard.controller.dart';
+import '../../controller/dashboard.controller.dart';
 
 class HomePage extends GetView<DashboardController> {
   const HomePage({super.key});
@@ -137,8 +137,8 @@ class HomePage extends GetView<DashboardController> {
                           width: screenWidth * 0.4,
                           child: Text(
                             '${controller.name.value}',
-                            style: GoogleFonts.greatVibes(
-                                fontSize: 18,
+                            style: GoogleFonts.lobster(
+                                fontSize: 20,
                                 color: Colors.white),
                             textAlign: TextAlign.right,
                           ),

@@ -63,6 +63,10 @@ dependencies:
   mockito: ^5.4.4
   build_runner: ^2.4.13
   mocktail: ^1.0.4
+  firebase_core: ^3.8.1
+  firebase_auth: ^5.3.4
+  cloud_firestore: ^5.5.1
+  persistent_bottom_nav_bar_v2: ^5.3.1
   
 
 dev_dependencies:

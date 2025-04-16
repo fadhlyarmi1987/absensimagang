@@ -1,5 +1,5 @@
 import 'package:absensimagang/route/page.dart';
-import 'package:absensimagang/views/auth/auth.controller.dart';
+import 'package:absensimagang/controller/auth.controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -54,8 +54,7 @@ class LoginPage extends GetView<AuthController> {
                   SizedBox(height: 20),
                   GestureDetector(
                     onTap: () {
-                      //controller.login();
-                      controller.loginApi();
+                      controller.loginWithFirebase();
                     },
                     child: Container(
                       width: 100,

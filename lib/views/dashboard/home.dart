@@ -177,72 +177,94 @@ class HomePage extends GetView<DashboardController> {
                           ),
                         ),
                         SizedBox(height: screenHeight * 0.015),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: screenWidth * 0.05),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
+                        FutureBuilder<Map<String, DateTime>>(
+                          future: TimeUtils.getAttendanceTimes(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            }
+
+                            if (snapshot.hasError || !snapshot.hasData) {
+                              return Text('Gagal memuat jadwal');
+                            }
+
+                            final times = snapshot.data!;
+                            final screenHeight =
+                                MediaQuery.of(context).size.height;
+                            final screenWidth =
+                                MediaQuery.of(context).size.width;
+
+                            return Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: screenWidth * 0.05),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
-                                    '${DateFormat('HH:mm').format(getCheckInStartTime())} - ${DateFormat('HH:mm').format(getCheckInEndTime())}',
-                                    style: TextStyle(
-                                        fontSize: screenHeight * 0.02),
-                                  ),
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.green),
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return const MapPage(isCheckIn: true);
-                                        },
-                                      );
-                                    },
-                                    child: Text(
-                                      'Check-In',
-                                      style: TextStyle(
-                                        fontSize: screenHeight * 0.02,
-                                        color: Colors.white,
+                                  Column(
+                                    children: [
+                                      Text(
+                                        '${DateFormat('HH:mm').format(times['checkInStart']!)} - ${DateFormat('HH:mm').format(times['checkInEnd']!)}',
+                                        style: TextStyle(
+                                            fontSize: screenHeight * 0.02),
                                       ),
-                                    ),
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.green),
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return const MapPage(
+                                                  isCheckIn: true);
+                                            },
+                                          );
+                                        },
+                                        child: Text(
+                                          'Check-In',
+                                          style: TextStyle(
+                                            fontSize: screenHeight * 0.02,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
+                                  Column(
+                                    children: [
+                                      Text(
+                                        '${DateFormat('HH:mm').format(times['checkOutStart']!)} - ${DateFormat('HH:mm').format(times['checkOutEnd']!)}',
+                                        style: TextStyle(
+                                            fontSize: screenHeight * 0.02),
+                                      ),
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.red),
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return const MapPage(
+                                                  isCheckIn: false);
+                                            },
+                                          );
+                                        },
+                                        child: Text(
+                                          'Check-Out',
+                                          style: TextStyle(
+                                            fontSize: screenHeight * 0.02,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
                                 ],
                               ),
-                              Column(
-                                children: [
-                                  Text(
-                                    '${DateFormat('HH:mm').format(getCheckOutStartTime())} - ${DateFormat('HH:mm').format(getCheckOutEndTime())}',
-                                    style: TextStyle(
-                                        fontSize: screenHeight * 0.02),
-                                  ),
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.red),
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return const MapPage(
-                                              isCheckIn: false);
-                                        },
-                                      );
-                                    },
-                                    child: Text(
-                                      'Check-Out',
-                                      style: TextStyle(
-                                        fontSize: screenHeight * 0.02,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
+                            );
+                          },
+                        )
                       ],
                     ),
                   ),

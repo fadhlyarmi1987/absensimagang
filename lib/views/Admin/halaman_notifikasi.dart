@@ -67,6 +67,7 @@ class SendNotificationPage extends StatelessWidget {
         title: const Text('Kirim Notifikasi'),
         backgroundColor: Colors.red.shade700,
       ),
+      backgroundColor: const Color.fromARGB(255, 193, 193, 193), // Apply background color here
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Card(

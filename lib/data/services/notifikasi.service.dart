@@ -13,8 +13,8 @@ class NotificationService {
 
       return snapshot.docs.map((doc) {
         return {
-          'judul': doc['message'] ?? 'Tanpa Judul', 
-          'isi': doc['title'] ?? 'Tidak ada isi', 
+          'judul': doc['title'] ?? 'Tanpa Judul', 
+          'isi': doc['message'] ?? 'Tidak ada isi', 
           'created_at': (doc['timestamp'] as Timestamp).toDate().toIso8601String(),
         };
       }).toList();

@@ -49,7 +49,7 @@ class _NotifikasiPageState extends State<NotifikasiPage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 20),
+              padding: const EdgeInsets.only(top: 25),
               child: Align(
                 alignment: Alignment.topCenter,
                 child: Container(
@@ -91,7 +91,7 @@ class _NotifikasiPageState extends State<NotifikasiPage> {
                                       .format(DateTime.parse(createdAt));
 
                               return Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10),
+                                padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 10),
                                 child: Card(
                                   elevation: 4,
                                   shape: RoundedRectangleBorder(

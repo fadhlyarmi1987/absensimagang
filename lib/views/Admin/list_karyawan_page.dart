@@ -209,13 +209,44 @@ class ListKaryawanPage extends StatelessWidget {
                               Text('Sisa Izin: $izin'),
                             ],
                           ),
+                          trailing: IconButton(
+                            icon: Icon(Icons.delete, color: Colors.red),
+                            onPressed: () async {
+                              final confirm = await showDialog<bool>(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text('Konfirmasi'),
+                                  content: Text(
+                                      'Apakah Anda yakin ingin menghapus akun ini?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, false),
+                                      child: Text('Batal'),
+                                    ),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.red),
+                                      onPressed: () =>
+                                          Navigator.pop(context, true),
+                                      child: Text('Hapus'),
+                                    ),
+                                  ],
+                                ),
+                              );
+
+                              if (confirm == true) {
+                                await deleteUser(userId, context);
+                              }
+                            },
+                          ),
                           onTap: () {
-                            // Aksi ketika item diklik, tampilkan modal dengan riwayat absensi
                             showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
                                 title: Text("Detail Karyawan"),
                                 content: Column(
+                                  mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text("Nama: $nama"),
@@ -249,5 +280,29 @@ class ListKaryawanPage extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Future<void> deleteUser(String userId, BuildContext context) async {
+    try {
+      await firestore.collection('users').doc(userId).delete();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Akun berhasil dihapus')),
+      );
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text('Gagal Menghapus'),
+          content: Text('Terjadi kesalahan saat menghapus akun:\n$e'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 }

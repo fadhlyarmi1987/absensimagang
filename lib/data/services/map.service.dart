@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../../controller/map2.controller.dart';
 import '../../utils/storage.dart';
 import '../../views/maps/map.controller.dart';
 
@@ -20,9 +21,6 @@ class MapViewModel {
         'kantorid': kantorId,
         'timestamp': FieldValue.serverTimestamp(),
       });
-
-      print('Data berhasil dikirim ke Firestore');
-      MapController().showSuccessDialog(context, currentName ?? "", position);
     } catch (e) {
       print('Error: $e');
     }

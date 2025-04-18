@@ -4,10 +4,12 @@ import 'package:absensimagang/data/services/auth.service.dart';
 import 'package:absensimagang/data/services/map.service.dart';
 import 'package:absensimagang/views/maps/map.controller.dart';
 import 'package:absensimagang/controller/map2.controller.dart';
+import 'package:absensimagang/utils/time_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'dart:math';
 import 'package:location/location.dart';
 
@@ -52,9 +54,10 @@ class _MapPageState extends State<MapPage> {
 
     final marker2 = Marker(
       markerId: MarkerId('Kontrakan'),
-      position: LatLng(-7.993497, 112.637382),
+      position: LatLng(-7.931133, 112.591202),
       onTap: () {
-        _showModalBottomSheet(context, 'Kontrakan', isCheckIn: widget.isCheckIn);
+        _showModalBottomSheet(context, 'Kontrakan',
+            isCheckIn: widget.isCheckIn);
       },
     );
 
@@ -69,7 +72,7 @@ class _MapPageState extends State<MapPage> {
 
     final circle2 = Circle(
       circleId: CircleId('GrahaCircle'),
-      center: LatLng(-7.993497, 112.637382),
+      center: LatLng(-7.931133, 112.591202),
       radius: radius,
       strokeColor: Colors.blue,
       strokeWidth: 2,
@@ -90,7 +93,8 @@ class _MapPageState extends State<MapPage> {
     _add();
     _getCurrentLocation();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _showModalBottomSheet(context, selectedOffice, isCheckIn: widget.isCheckIn);
+      _showModalBottomSheet(context, selectedOffice,
+          isCheckIn: widget.isCheckIn);
     });
   }
 
@@ -126,202 +130,224 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-  void _showModalBottomSheet(BuildContext context, String officeName, {required bool isCheckIn}) {
-  showModalBottomSheet(
-    context: context,
-    builder: (BuildContext context) {
-      return Container(
-        height: 200,
-        color: Colors.white,
-        child: Card(
-          elevation: 4,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.fromLTRB(40, 20, 50, 0),
-                child: Text(
-                  'Pilih Lokasi Kantor',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(40, 0, 40, 10),
-                child: DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10)
-                    ),
-                    filled: true,
-                    fillColor: const Color.fromARGB(255, 232, 242, 251),
+  void _showModalBottomSheet(BuildContext context, String officeName,
+      {required bool isCheckIn}) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 200,
+          color: Colors.white,
+          child: Card(
+            elevation: 4,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(40, 20, 50, 0),
+                  child: Text(
+                    'Pilih Lokasi Kantor',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
-                  borderRadius: BorderRadius.circular(10),
-                  hint: Text('Pilih Kantor'),
-                  items: [
-                    DropdownMenuItem(
-                      value: 'Lab',
-                      child: Center(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                color: Colors.grey.shade300,
-                                width: 1,
-                              )
-                            )
-                          ),
-                          child: Text('Lab')
-                        ),
-                      ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(40, 0, 40, 10),
+                  child: DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      filled: true,
+                      fillColor: const Color.fromARGB(255, 232, 242, 251),
                     ),
-                    DropdownMenuItem(
-                      value: 'Kontrakan',
-                      child: Center(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                color: Colors.grey.shade300,
-                                width: 1,
-                              ),
-                            ),
-                          ),
-                          child: Text('Kontrakan'),
-                        ),
-                      ),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      selectedOffice = value!;
-                    });
-                    if (value == 'Lab') {
+                    borderRadius: BorderRadius.circular(10),
+                    hint: Text('Pilih Kantor'),
+                    value: selectedOffice.isNotEmpty ? selectedOffice : null,
+                    items: [
+                      DropdownMenuItem(value: 'Lab', child: Text('Lab')),
+                      DropdownMenuItem(
+                          value: 'Kontrakan', child: Text('Kontrakan')),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        selectedOffice = value!;
+                      });
+                      LatLng newTarget = value == 'Lab'
+                          ? LatLng(-7.921121, 112.599286)
+                          : LatLng(-7.931133, 112.591202);
                       mapController.animateCamera(
                         CameraUpdate.newCameraPosition(
-                          CameraPosition(
-                            target: LatLng(-7.921121, 112.599286),
-                            zoom: 19.0,
-                          ),
+                          CameraPosition(target: newTarget, zoom: 19.0),
                         ),
                       );
-                    } else if (value == 'Kontrakan') {
-                      mapController.animateCamera(
-                        CameraUpdate.newCameraPosition(
-                          CameraPosition(
-                            target: LatLng(-7.993497, 112.637382),
-                            zoom: 19.0,
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(40, 0, 40, 0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Color.fromARGB(255, 18, 173, 164),
-                        Colors.blue
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(12),
+                    },
                   ),
-                  child: Center(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)
-                        )
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(40, 0, 40, 0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Color.fromARGB(255, 18, 173, 164),
+                          Colors.blue
+                        ],
                       ),
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                        child: Container(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Center(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(10),
                           child: Text(
-                            textAlign: TextAlign.center,
                             'Selanjutnya',
-                            style: GoogleFonts.content(
+                            style: GoogleFonts.poppins(
                               fontWeight: FontWeight.bold,
                               fontSize: 15,
-                              color: Colors.white
+                              color: Colors.white,
                             ),
                           ),
                         ),
-                      ),
-                      onPressed: () async {
-                        Navigator.pop(context);
-                        if (currentLocation != null &&
-                          _isWithinRadius(
-                            currentLocation!,
-                            selectedOffice == 'Lab'
-                              ? LatLng(
-                                -7.921121, 112.599286)
-                              : LatLng(-7.993497, 112.637382))) {
-                          if (selectedOffice == 'Lab') {
-                            LatLng officeMeriPosition = const LatLng(-7.921121, 112.599286);
-                            if (isCheckIn) {
-                              //await MapViewModel().sendDataToDatabaseMeri(context);
+                        onPressed: () async {
+                          Navigator.pop(context);
 
-                              // panggil fungsi checkIn di Map2Controller
-                              map2Controller.checkIn(
-                                'Lab', 
-                                officeMeriPosition.latitude, 
-                                officeMeriPosition.longitude
-                              );
-                            } else {
-                              //await MapViewModel().sendDataToDatabaseMeriCheckout(context);
+                          final now = DateTime.now();
+                          final bool isValidTime = isCheckIn
+                              ? isCheckInTime(now)
+                              : isCheckOutTime(now);
 
-                              // panggil fungsi checkOut di Map2Controller
-                              map2Controller.checkOut(
-                                'Lab', 
-                                officeMeriPosition.latitude, 
-                                officeMeriPosition.longitude
-                              );
-                            }
-                          } else if (selectedOffice == 'Kontrakan') {
-                            LatLng officeGrahaPosition = const LatLng(-7.993497, 112.637382);
-                            if (isCheckIn) {
-                              //await MapViewModel().sendDataToDatabaseGraha(context);
-
-                              // panggil fungsi checkIn di Map2Controller
-                              map2Controller.checkIn(
-                                'Kontrakan', 
-                                officeGrahaPosition.latitude, 
-                                officeGrahaPosition.longitude
-                              );
-                            } else {
-                              //await MapViewModel().sendDataToDatabaseGrahaCheckout(context);
-
-                              // panggil fungsi checkOut di Map2Controller
-                              map2Controller.checkOut(
-                                'Kontrakan', 
-                                officeGrahaPosition.latitude, 
-                                officeGrahaPosition.longitude
-                              );
-                            }
+                          if (!isValidTime) {
+                            showInvalidTimeDialog(context, isCheckIn);
+                            return;
                           }
-                        } else {
-                          mapControllers.showOutOfRadiusModal(context);
-                        }
-                      },
+
+                          if (currentLocation != null &&
+                              _isWithinRadius(
+                                currentLocation!,
+                                selectedOffice == 'Lab'
+                                    ? LatLng(-7.921121, 112.599286)
+                                    : LatLng(-7.931133, 112.591202),
+                              )) {
+                            final LatLng officePosition =
+                                selectedOffice == 'Lab'
+                                    ? LatLng(-7.921121, 112.599286)
+                                    : LatLng(-7.931133, 112.591202);
+
+                            if (isCheckIn) {
+                              map2Controller.checkIn(
+                                selectedOffice,
+                                officePosition.latitude,
+                                officePosition.longitude,
+                              );
+                            } else {
+                              map2Controller.checkOut(
+                                  selectedOffice,
+                                  officePosition.latitude,
+                                  officePosition.longitude);
+                            }
+                          } else {
+                            mapControllers.showOutOfRadiusModal(context);
+                          }
+                        },
+                      ),
                     ),
                   ),
                 ),
-              )
-            ],
+              ],
+            ),
           ),
-        ),
-      );
-    },
-  );
-}
+        );
+      },
+    );
+  }
 
+  // bool isCheckInTime(DateTime now) {
+  //   final start = TimeOfDay(hour: 0, minute: 0);
+  //   final end = TimeOfDay(hour: 8, minute: 0);
+  //   return _isWithinTimeRange(now, start, end);
+  // }
+
+  // bool isCheckOutTime(DateTime now) {
+  //   final start = TimeOfDay(hour: 1, minute: 30);
+  //   final end = TimeOfDay(hour: 17, minute: 0);
+  //   return _isWithinTimeRange(now, start, end);
+  // }
+
+  bool _isWithinTimeRange(DateTime now, TimeOfDay start, TimeOfDay end) {
+    final nowTime = TimeOfDay(hour: now.hour, minute: now.minute);
+    final nowMinutes = nowTime.hour * 60 + nowTime.minute;
+    final startMinutes = start.hour * 60 + start.minute;
+    final endMinutes = end.hour * 60 + end.minute;
+    return nowMinutes >= startMinutes && nowMinutes <= endMinutes;
+  }
+
+  void showInvalidTimeDialog(BuildContext context, bool isCheckIn) {
+  final DateFormat timeFormat = DateFormat('HH:mm');
+  
+  final startTime = isCheckIn ? getCheckInStartTime() : getCheckOutStartTime();
+  final endTime = isCheckIn ? getCheckInEndTime() : getCheckOutEndTime();
+
+  final formattedStart = timeFormat.format(startTime);
+  final formattedEnd = timeFormat.format(endTime);
+
+  final message = isCheckIn
+      ? 'Check-In hanya dapat dilakukan antara jam $formattedStart - $formattedEnd.'
+      : 'Check-Out hanya dapat dilakukan antara jam $formattedStart - $formattedEnd.';
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          elevation: 10,
+          backgroundColor: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.access_time_filled,
+                    color: Colors.redAccent, size: 50),
+                SizedBox(height: 15),
+                Text(
+                  "Diluar Waktu yang Diizinkan",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.black87,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text("OK", style: TextStyle(color: Colors.white)),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   bool _isWithinRadius(LatLng currentLocation, LatLng markerLocation) {
     double distance = _calculateDistance(

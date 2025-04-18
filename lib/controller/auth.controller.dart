@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import '../route/page.dart';
 import '../utils/storage.dart';
 
-
 class AuthBinding implements Bindings {
   @override
   void dependencies() {
@@ -27,6 +26,9 @@ class AuthController extends GetxController {
   var isMagang = false.obs;
   var userType = ''.obs; // Untuk menyimpan user_type
 
+  RxBool isPasswordVisible = false.obs;
+  RxBool isCPasswordVisible = false.obs;
+
   bool isLogin = false;
 
   @override
@@ -45,18 +47,18 @@ class AuthController extends GetxController {
       // Dapatkan data pengguna dari Firestore
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        DocumentSnapshot userDoc = await _firestore
-            .collection('users')
-            .doc(user.email)
-            .get();
+        DocumentSnapshot userDoc =
+            await _firestore.collection('users').doc(user.email).get();
 
         if (userDoc.exists) {
-          String userType = userDoc['user_type']; // Asumsikan field 'user_type' ada di Firestore
+          String userType = userDoc[
+              'user_type']; // Asumsikan field 'user_type' ada di Firestore
           this.userType.value = userType;
 
           // Alihkan berdasarkan user_type
           if (userType == 'karyawan') {
-            Get.offAllNamed(Routes.dahsboard); // Menuju ke halaman DashboardPage
+            Get.offAllNamed(
+                Routes.dahsboard); // Menuju ke halaman DashboardPage
           } else if (userType == 'admin') {
             Get.offAllNamed(Routes.adminpage); // Menuju ke halaman AdminPage
           } else {
@@ -64,8 +66,13 @@ class AuthController extends GetxController {
                 Colors.white, const Duration(seconds: 2), SnackPosition.BOTTOM);
           }
         } else {
-          showSnackbar('Kesalahan', 'Pengguna tidak ditemukan di database', Colors.red,
-              Colors.white, const Duration(seconds: 2), SnackPosition.BOTTOM);
+          showSnackbar(
+              'Kesalahan',
+              'Pengguna tidak ditemukan di database',
+              Colors.red,
+              Colors.white,
+              const Duration(seconds: 2),
+              SnackPosition.BOTTOM);
         }
       }
     } catch (e) {
@@ -119,7 +126,8 @@ class AuthController extends GetxController {
             .doc(controllerEmail.text)
             .get();
         if (userDoc.exists) {
-          String userType = userDoc['user_type']; // Asumsikan field 'user_type' ada di Firestore
+          String userType = userDoc[
+              'user_type']; // Asumsikan field 'user_type' ada di Firestore
 
           // Tampilkan snackbar sukses
           showSnackbar(
@@ -134,7 +142,8 @@ class AuthController extends GetxController {
 
           // Alihkan berdasarkan user_type
           if (userType == 'karyawan') {
-            Get.offAllNamed(Routes.dahsboard); // Menuju ke halaman DashboardPage
+            Get.offAllNamed(
+                Routes.dahsboard); // Menuju ke halaman DashboardPage
           } else if (userType == 'admin') {
             Get.offAllNamed(Routes.init); // Menuju ke halaman AdminPage
           } else {
@@ -152,11 +161,10 @@ class AuthController extends GetxController {
         }
       }
     } catch (e) {
-      showSnackbar('Login Gagal', e.toString(), Colors.red, Colors.white,
-          const Duration(seconds: 2), SnackPosition.BOTTOM);
+      showSnackbar('Login Gagal', 'Password / Email salah', Colors.red,
+          Colors.white, const Duration(seconds: 2), SnackPosition.BOTTOM);
     }
   }
-
 
   // Validasi registrasi
   bool checkRegister() {
@@ -164,6 +172,10 @@ class AuthController extends GetxController {
 
     if (controllerNama.text.isEmpty) {
       errors.add('Nama harus diisi');
+    } else if (controllerNama.text.trim().length < 2) {
+      errors.add('Nama minimal harus terdiri dari 2 huruf');
+    } else if (!RegExp(r"^[a-zA-Z\s]+$").hasMatch(controllerNama.text.trim())) {
+      errors.add('Nama hanya boleh huruf dan spasi');
     }
 
     if (controllerEmail.text.isEmpty) {
@@ -177,10 +189,12 @@ class AuthController extends GetxController {
     } else if (controllerPassword.text.length < 8) {
       errors.add('Password harus lebih dari 8 karakter');
     }
-
-    if (controllerPassword.text != controllerCPassword.text) {
+    if (controllerCPassword.text.isEmpty) {
+      errors.add('confirm passworde tidak boleh kosong');
+    } else if (controllerPassword.text != controllerCPassword.text) {
       errors.add('Password dan konfirmasi password tidak cocok');
     }
+    
 
     if (errors.isNotEmpty) {
       showSnackbar('Kesalahan', errors.join('\n'), Colors.red, Colors.white,
@@ -190,7 +204,6 @@ class AuthController extends GetxController {
     return true;
   }
 
-  // Registrasi menggunakan Firebase
   Future<void> registerWithFirebase() async {
     if (!checkRegister()) return;
 
@@ -211,7 +224,7 @@ class AuthController extends GetxController {
           'email': controllerEmail.text.trim(),
           'created_at': DateTime.now().toIso8601String(),
           'user_type': 'karyawan',
-          'izin' : 4,
+          'izin': 4,
           'uid': user.uid,
         });
 
@@ -225,15 +238,33 @@ class AuthController extends GetxController {
           SnackPosition.BOTTOM,
         );
 
-        // Simpan status login ke storage lokal dan pindahkan ke halaman awal
-        //_storage.login();
+        // Pindah ke halaman login atau dashboard
         Get.offAllNamed(Routes.init);
       }
-    } catch (e) {
-      // Tampilkan pesan error jika registrasi gagal
+    } on FirebaseAuthException catch (e) {
+      String errorMessage = 'Registrasi gagal';
+
+      if (e.code == 'email-already-in-use') {
+        errorMessage = 'Email sudah terdaftar. Silakan gunakan email lain.';
+      } else if (e.code == 'invalid-email') {
+        errorMessage = 'Format email tidak valid.';
+      } else if (e.code == 'weak-password') {
+        errorMessage = 'Password terlalu lemah. Gunakan minimal 6 karakter.';
+      }
+
       showSnackbar(
         'Registrasi Gagal',
-        e.toString(),
+        errorMessage,
+        Colors.red,
+        Colors.white,
+        const Duration(seconds: 2),
+        SnackPosition.BOTTOM,
+      );
+    } catch (e) {
+      // Tangani error lainnya (tidak dari FirebaseAuth)
+      showSnackbar(
+        'Registrasi Gagal',
+        'Terjadi kesalahan. Silakan coba lagi.',
         Colors.red,
         Colors.white,
         const Duration(seconds: 2),

@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "absensikaryawan2-1db14"
+  },
+  "functions": {
+    "predeploy": []
+  }
+}

@@ -51,7 +51,7 @@ class LoginPage extends GetView<AuthController> {
                     obscureText: true,
                     controller: controller.controllerPassword,
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 5),
                   GestureDetector(
                     onTap: () {
                       controller.loginWithFirebase();

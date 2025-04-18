@@ -15,13 +15,46 @@ class AdminPage extends StatelessWidget {
         title: const Text("Halaman Admin"),
         backgroundColor: Colors.red.shade700,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              controller.logout();
-            },
-          ),
-        ],
+  IconButton(
+    icon: const Icon(Icons.logout),
+    onPressed: () {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            title: Row(
+              children: [
+                Icon(Icons.logout, color: Colors.redAccent),
+                SizedBox(width: 10),
+                Text("Konfirmasi Logout"),
+              ],
+            ),
+            content: Text("Apakah Anda yakin ingin keluar dari aplikasi?"),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text("Batal"),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  controller.logout();
+                },
+                child: Text("Keluar", style: TextStyle(color: Colors.white)),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  ),
+],
+
       ),
       body: Column(
         children: [

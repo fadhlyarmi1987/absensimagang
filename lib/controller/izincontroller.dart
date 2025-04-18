@@ -60,13 +60,12 @@ class IzinController {
           await transaction.update(userRef, {'izin': currentIzin});
           
           print('Izin berhasil diajukan');
-          Get.snackbar('Berhasil $name', 'Berhasil Izin $keterangan');
+          Get.snackbar('$name', 'Berhasil Izin $keterangan');
         } else {
           throw Exception('Tidak cukup izin');
         }
       });
     } catch (e) {
-      throw Exception('Gagal mengajukan izin: $e');
     }
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:absensimagang/utils/time_utils.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -56,7 +57,9 @@ class HomePage extends GetView<DashboardController> {
                         child: SizedBox(
                           height: screenHeight * 0.06,
                           width: screenWidth * 0.42,
-                          child: Image.asset("assets/Logo_Natusi.png",),
+                          child: Image.asset(
+                            "assets/Logo_Natusi.png",
+                          ),
                         ),
                       ),
                     ),
@@ -75,31 +78,32 @@ class HomePage extends GetView<DashboardController> {
                             ),
                           ),
                           StreamBuilder(
-                          stream: Stream.periodic(Duration(seconds: 1)),
-                          builder: (context, snapshot) {
-                            var now = DateTime.now();
-                            var formattedTime =
-                                DateFormat('HH:mm:ss').format(now);
-                            var formattedDate =
-                                DateFormat('EEEE, dd MMMM yyyy', 'id')
-                                    .format(now);
+                            stream: Stream.periodic(Duration(seconds: 1)),
+                            builder: (context, snapshot) {
+                              var now = DateTime.now();
+                              var formattedTime =
+                                  DateFormat('HH:mm:ss').format(now);
+                              var formattedDate =
+                                  DateFormat('EEEE, dd MMMM yyyy', 'id')
+                                      .format(now);
 
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  formattedTime,
-                                  style: TextStyle(
-                                      fontSize: 50,
-                                      color:
-                                          Color.fromARGB(255, 255, 255, 255)),
-                                ),
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    formattedTime,
+                                    style: TextStyle(
+                                        fontSize: 50,
+                                        color:
+                                            Color.fromARGB(255, 255, 255, 255)),
+                                  ),
                                   const SizedBox(height: 1),
                                   Text(
                                     formattedDate,
                                     style: TextStyle(
                                       fontSize: screenHeight * 0.025,
-                                      color: const Color.fromARGB(255, 255, 255, 255),
+                                      color: const Color.fromARGB(
+                                          255, 255, 255, 255),
                                     ),
                                   ),
                                 ],
@@ -138,8 +142,7 @@ class HomePage extends GetView<DashboardController> {
                           child: Text(
                             '${controller.name.value}',
                             style: GoogleFonts.lobster(
-                                fontSize: 20,
-                                color: Colors.white),
+                                fontSize: 20, color: Colors.white),
                             textAlign: TextAlign.right,
                           ),
                         )
@@ -175,15 +178,17 @@ class HomePage extends GetView<DashboardController> {
                         ),
                         SizedBox(height: screenHeight * 0.015),
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: screenWidth * 0.05),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Column(
                                 children: [
                                   Text(
-                                    '07:00 - 08:00',
-                                    style: TextStyle(fontSize: screenHeight * 0.02),
+                                    '${DateFormat('HH:mm').format(getCheckInStartTime())} - ${DateFormat('HH:mm').format(getCheckInEndTime())}',
+                                    style: TextStyle(
+                                        fontSize: screenHeight * 0.02),
                                   ),
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
@@ -209,8 +214,9 @@ class HomePage extends GetView<DashboardController> {
                               Column(
                                 children: [
                                   Text(
-                                    '16:30 - 17:00',
-                                    style: TextStyle(fontSize: screenHeight * 0.02),
+                                    '${DateFormat('HH:mm').format(getCheckOutStartTime())} - ${DateFormat('HH:mm').format(getCheckOutEndTime())}',
+                                    style: TextStyle(
+                                        fontSize: screenHeight * 0.02),
                                   ),
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
@@ -219,7 +225,8 @@ class HomePage extends GetView<DashboardController> {
                                       showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
-                                          return const MapPage(isCheckIn: false);
+                                          return const MapPage(
+                                              isCheckIn: false);
                                         },
                                       );
                                     },
@@ -274,14 +281,15 @@ class HomePage extends GetView<DashboardController> {
                             Expanded(
                               child: Obx(() {
                                 return ListView.builder(
-                                  itemCount: controller.listhadir.length,  // Update here
+                                  itemCount: controller
+                                      .listhadir.length, // Update here
                                   itemBuilder: (context, index) {
-                                    var attendance = controller.listhadir[index];
+                                    var attendance =
+                                        controller.listhadir[index];
 
                                     return Column(
                                       children: [
                                         ListTile(
-                                         
                                           title: Text(
                                             attendance['date']!,
                                             style: TextStyle(
@@ -294,13 +302,21 @@ class HomePage extends GetView<DashboardController> {
                                             children: [
                                               Row(
                                                 children: [
-                                                  Text('Check-In:', style: TextStyle(fontSize: screenHeight * 0.015)),
+                                                  Text('Check-In:',
+                                                      style: TextStyle(
+                                                          fontSize:
+                                                              screenHeight *
+                                                                  0.015)),
                                                   Expanded(
                                                     child: Container(
-                                                      alignment: Alignment.centerRight,
+                                                      alignment:
+                                                          Alignment.centerRight,
                                                       child: Text(
                                                         '${attendance['checkIn']}',
-                                                        style: TextStyle(fontSize: screenHeight * 0.015),
+                                                        style: TextStyle(
+                                                            fontSize:
+                                                                screenHeight *
+                                                                    0.015),
                                                       ),
                                                     ),
                                                   ),
@@ -308,13 +324,21 @@ class HomePage extends GetView<DashboardController> {
                                               ),
                                               Row(
                                                 children: [
-                                                  Text('Check-Out:', style: TextStyle(fontSize: screenHeight * 0.015)),
+                                                  Text('Check-Out:',
+                                                      style: TextStyle(
+                                                          fontSize:
+                                                              screenHeight *
+                                                                  0.015)),
                                                   Expanded(
                                                     child: Container(
-                                                      alignment: Alignment.centerRight,
+                                                      alignment:
+                                                          Alignment.centerRight,
                                                       child: Text(
                                                         '${attendance['checkOut']}',
-                                                        style: TextStyle(fontSize: screenHeight * 0.015),
+                                                        style: TextStyle(
+                                                            fontSize:
+                                                                screenHeight *
+                                                                    0.015),
                                                       ),
                                                     ),
                                                   ),

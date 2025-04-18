@@ -18,7 +18,7 @@ class RegisterPage extends GetView<AuthController> {
           Center(
             child: SingleChildScrollView(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Container(
                       decoration: BoxDecoration(
@@ -32,21 +32,45 @@ class RegisterPage extends GetView<AuthController> {
                               color: Colors.white,
                               fontSize: 30,
                               fontWeight: FontWeight.bold))),
-                  SizedBox(height: 20),
+                  SizedBox(height: 0),
                   CustomTextField(
                       label: 'Nama', controller: controller.controllerNama),
                   CustomTextField(
                       label: 'Email/Username',
                       controller: controller.controllerEmail),
-                  CustomTextField(
-                      label: 'Password',
-                      obscureText: true,
-                      controller: controller.controllerPassword),
-                  CustomTextField(
-                      label: 'Confirm Password',
-                      obscureText: true,
-                      controller: controller.controllerCPassword),
-                  SizedBox(height: 20),
+                  Obx(() => CustomTextField(
+                        label: 'Password',
+                        obscureText: !controller.isPasswordVisible.value,
+                        controller: controller.controllerPassword,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            controller.isPasswordVisible.value
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            controller.isPasswordVisible.value =
+                                !controller.isPasswordVisible.value;
+                          },
+                        ),
+                      )),
+                  Obx(() => CustomTextField(
+                        label: 'Confirm Password',
+                        obscureText: !controller.isCPasswordVisible.value,
+                        controller: controller.controllerCPassword,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            controller.isCPasswordVisible.value
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            controller.isCPasswordVisible.value =
+                                !controller.isCPasswordVisible.value;
+                          },
+                        ),
+                      )),
+                  SizedBox(height: 5),
                   GestureDetector(
                     onTap: () {
                       //controller.register();
@@ -118,12 +142,14 @@ class CustomTextField extends StatelessWidget {
   final String label;
   final bool obscureText;
   final TextEditingController controller;
+  final Widget? suffixIcon;
 
   const CustomTextField({
     Key? key,
     required this.label,
     this.obscureText = false,
     required this.controller,
+    this.suffixIcon,
   }) : super(key: key);
 
   @override
@@ -131,14 +157,17 @@ class CustomTextField extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
       child: Container(
-        decoration: BoxDecoration(boxShadow: [
-          BoxShadow(
-            color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.2),
-            spreadRadius: 2,
-            blurRadius: 7,
-            offset: Offset(0, 3),
-          ),
-        ], borderRadius: BorderRadius.circular(40)),
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 7,
+              offset: Offset(0, 3),
+            ),
+          ],
+          borderRadius: BorderRadius.circular(40),
+        ),
         child: TextField(
           controller: controller,
           obscureText: obscureText,
@@ -146,6 +175,7 @@ class CustomTextField extends StatelessWidget {
             hintText: label,
             fillColor: Colors.white,
             filled: true,
+            suffixIcon: suffixIcon,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
               borderSide: BorderSide.none,
@@ -156,4 +186,5 @@ class CustomTextField extends StatelessWidget {
       ),
     );
   }
+
 }

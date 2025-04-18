@@ -1,1 +1,46 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"absensikaryawan2-1db14","appId":"1:509464820324:android:58fa70d1f72edaf758bd71","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"absensikaryawan2-1db14","appId":"1:509464820324:ios:7cd2c3eb7df5184e58bd71","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"absensikaryawan2-1db14","configurations":{"android":"1:509464820324:android:58fa70d1f72edaf758bd71","ios":"1:509464820324:ios:7cd2c3eb7df5184e58bd71"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "absensikaryawan2-1db14",
+          "appId": "1:509464820324:android:58fa70d1f72edaf758bd71",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "absensikaryawan2-1db14",
+          "appId": "1:509464820324:ios:7cd2c3eb7df5184e58bd71",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "absensikaryawan2-1db14",
+          "configurations": {
+            "android": "1:509464820324:android:58fa70d1f72edaf758bd71",
+            "ios": "1:509464820324:ios:7cd2c3eb7df5184e58bd71"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
+    }
+  ]
+}

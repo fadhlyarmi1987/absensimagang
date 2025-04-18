@@ -1,6 +1,8 @@
-import 'package:absensimagang/utils/api_constants.dart';
+import 'package:absensimagang/views/dashboard/gantipassword.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:absensimagang/utils/storage.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import '../../controller/dashboard.controller.dart';
@@ -14,10 +16,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final DashboardController controller = Get.find<DashboardController>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _oldPasswordController = TextEditingController();
+  final TextEditingController _newPasswordController = TextEditingController();
   final Storage storage = Storage();
   late String userId;
-
   final a = Get.arguments;
+  bool _isOldPasswordVisible = false;
+  bool _isNewPasswordVisible = false;
 
   @override
   void initState() {
@@ -30,45 +35,49 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> _updateProfile() async {
     try {
-      final response = await Dio().put(
-        '${ApiConstants.users}/$userId',
-        data: {
-          'id': storage.getId(),
-          'name': _nameController.text,
-          'email': _emailController.text,
-        },
-      );
+      final String? currentEmail = storage.getEmail();
+      final String newName = _nameController.text.trim();
+      final String newEmail = _emailController.text.trim();
+      final String oldPassword = _oldPasswordController.text.trim();
+      final String newPassword = _newPasswordController.text.trim();
 
-      if (response.statusCode == 200) {
-        controller.name.value = _nameController.text;
-        controller.email.value = _emailController.text;
-
+      // Cek apakah ada perubahan pada nama
+      if (newName == controller.name.value) {
         Get.snackbar(
-          'Berhasil',
-          'Profil berhasil diperbarui',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          icon: Icon(Icons.check_circle, color: Colors.white),
-        );
-
-        await Future.delayed(Duration(seconds: 2));
-
-        controller.logout();
-      } else {
-        Get.snackbar(
-          'Error',
-          'Gagal memperbarui profil',
+          'Gagal Update',
+          'Tidak tidak ada perubahan yang dilakukan',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,
           icon: Icon(Icons.error, color: Colors.white),
         );
+        return; // Tidak melanjutkan update jika nama tidak berubah
       }
+
+      // Update nama dan email terlebih dahulu
+      await _updateFirestoreProfile(currentEmail, newName, newEmail);
+
+      // Update password jika ada input
+      if (newPassword.isNotEmpty) {
+        await _changePassword(oldPassword, newPassword);
+      }
+
+      // Update controller dan GetStorage
+      controller.name.value = newName;
+      controller.email.value = newEmail;
+
+      Get.snackbar(
+        'Berhasil',
+        'Perubahan berhasil disimpan',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        icon: Icon(Icons.check_circle, color: Colors.white),
+      );
     } catch (e) {
       Get.snackbar(
         'Error',
-        'Terjadi kesalahan',
+        'Terjadi kesalahan: $e',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -77,104 +86,208 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
+  Future<void> _updateFirestoreProfile(
+      String? currentEmail, String newName, String newEmail) async {
+    if (currentEmail == null) throw Exception('Email pengguna tidak ditemukan');
+
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('email', isEqualTo: currentEmail)
+        .limit(1)
+        .get();
+
+    if (snapshot.docs.isEmpty) {
+      throw Exception('User tidak ditemukan di Firestore');
+    }
+
+    final docId = snapshot.docs.first.id;
+
+    await FirebaseFirestore.instance.collection('users').doc(docId).update({
+      'name': newName,
+      'email': newEmail,
+    });
+  }
+
+  Future<void> _changePassword(String oldPassword, String newPassword) async {
+    if (oldPassword.isEmpty) {
+      Get.snackbar(
+        'Error',
+        'Password lama harus diisi untuk mengganti password',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        icon: Icon(Icons.error, color: Colors.white),
+      );
+      throw Exception('Password lama kosong');
+    }
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) throw Exception('User tidak ditemukan di Firebase Auth');
+
+    final cred = EmailAuthProvider.credential(
+      email: user.email!,
+      password: oldPassword,
+    );
+
+    try {
+      await user.reauthenticateWithCredential(cred);
+      await user.updatePassword(newPassword);
+      print('Password berhasil diubah');
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Password lama salah atau gagal mengubah password',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        icon: Icon(Icons.error, color: Colors.white),
+      );
+      throw Exception('Gagal mengubah password');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.of(context).pop();
-        return false;
-      },
-      child: Scaffold(
-        body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [const Color.fromARGB(255, 1, 87, 157), const Color.fromARGB(255, 148, 235, 247)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomCenter,
-            ),
+    return Scaffold(
+      body: Container(
+        height: 1000,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color.fromARGB(255, 244, 1, 1),
+              Color.fromARGB(255, 216, 253, 255)
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomCenter,
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Padding(
-              padding: const EdgeInsets.only(top: 40),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.arrow_back, color: Colors.white),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        'Edit Nama Atau Email Kamu',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 16),
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      labelText: 'Nama',
-                      labelStyle: TextStyle(color: Colors.white70),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.2),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                /// 🔙 AppBar Custom
+                Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: () => Navigator.pop(context),
                     ),
-                    keyboardType: TextInputType.name,
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  SizedBox(height: 16),
-                  TextFormField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      labelStyle: TextStyle(color: Colors.white70),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'Edit Profil',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.2),
                     ),
-                    keyboardType: TextInputType.emailAddress,
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButton(
-                        
-                        onPressed: _updateProfile,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(255, 8, 240, 19),
-                          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 20),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            
-                          ),
-                          elevation: 5
-                        ),
-                        child: Text('Simpan'),
+                  ],
+                ),
+                const SizedBox(height: 40),
+
+                /// 🧑 Nama
+                _buildTextField(
+                  controller: _nameController,
+                  label: 'Nama',
+                ),
+                const SizedBox(height: 20),
+
+                /// 📧 Email
+                _buildTextField(
+                  controller: _emailController,
+                  label: '',
+                  enabled: false,
+                ),
+                const SizedBox(height: 32),
+
+                /// 💾 Tombol Simpan
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton.icon(
+                    onPressed: _updateProfile,
+                    icon: const Icon(Icons.save),
+                    label: const Text('Simpan', style: TextStyle(fontSize: 16)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
                       ),
-                    ],
+                      elevation: 4,
+                    ),
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 16),
+
+                /// 🔒 Tombol Ganti Password
+                SizedBox(height: 20),
+
+                // 👉 TOMBOL UBAH PASSWORD
+                GestureDetector(
+                  onTap: () {
+                    Get.to(() =>
+                        ChangePasswordPage()); // Pastikan halaman ini kamu buat
+                  },
+                  child: Text(
+                    'Ingin mengubah password?',
+                    style: TextStyle(
+                      color: Colors.white,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
       ),
     );
   }
+
+  Widget _buildTextField({
+  required TextEditingController controller,
+  required String label,
+  bool enabled = true,
+}) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      if (label.isNotEmpty)
+        Padding(
+          padding: const EdgeInsets.only(bottom: 6),
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              color: Colors.white,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      TextField(
+        controller: controller,
+        enabled: enabled,
+        style: TextStyle(color: enabled ? Colors.black : Colors.grey),
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: enabled ? Colors.white : Colors.grey.shade300,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: Colors.blueAccent),
+          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        ),
+      ),
+    ],
+  );
+}
+
 }

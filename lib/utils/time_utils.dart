@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class TimeUtils {
   static final _firestore = FirebaseFirestore.instance;
@@ -51,15 +52,28 @@ class TimeUtils {
     return times['checkOutEnd']!;
   }
 
-  static Future<bool> isCheckInTime(DateTime now) async {
-    final start = await getCheckInStartTime();
-    final end = await getCheckInEndTime();
-    return now.isAfter(start) && now.isBefore(end);
-  }
+  static bool _isNowWithinTimeRange(DateTime now, DateTime start, DateTime end) {
+  final nowTime = TimeOfDay(hour: now.hour, minute: now.minute);
+  final startTime = TimeOfDay(hour: start.hour, minute: start.minute);
+  final endTime = TimeOfDay(hour: end.hour, minute: end.minute);
 
-  static Future<bool> isCheckOutTime(DateTime now) async {
-    final start = await getCheckOutStartTime();
-    final end = await getCheckOutEndTime();
-    return now.isAfter(start) && now.isBefore(end);
-  }
+  final nowMinutes = nowTime.hour * 60 + nowTime.minute;
+  final startMinutes = startTime.hour * 60 + startTime.minute;
+  final endMinutes = endTime.hour * 60 + endTime.minute;
+
+  return nowMinutes >= startMinutes && nowMinutes <= endMinutes;
+}
+
+static Future<bool> isCheckInTime(DateTime now) async {
+  final start = await getCheckInStartTime();
+  final end = await getCheckInEndTime();
+  return _isNowWithinTimeRange(now, start, end);
+}
+
+static Future<bool> isCheckOutTime(DateTime now) async {
+  final start = await getCheckOutStartTime();
+  final end = await getCheckOutEndTime();
+  return _isNowWithinTimeRange(now, start, end);
+}
+
 }

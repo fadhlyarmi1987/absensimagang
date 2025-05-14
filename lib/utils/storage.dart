@@ -27,4 +27,11 @@ class Storage {
     _storage.remove('isLogin');
     _storage.remove('name');
   }
+
+  void saveLoginData(String email) {
+    _storage.write('saved_email', email);
+  }
+
+  String? getSavedEmail() => _storage.read('saved_email');
 }
+

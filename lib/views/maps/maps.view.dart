@@ -5,12 +5,13 @@ import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-
 import 'package:absensimagang/controller/map2.controller.dart';
 import 'package:absensimagang/data/services/auth.service.dart';
 import 'package:absensimagang/data/services/map.service.dart';
 import 'package:absensimagang/utils/time_utils.dart';
 import 'package:absensimagang/views/maps/map.controller.dart';
+
+import '../../data/services/kantor.service.dart';
 
 class MapPage extends StatefulWidget {
   final bool isCheckIn;
@@ -26,14 +27,17 @@ class _MapPageState extends State<MapPage> {
   final AuthService service = AuthService();
   final Map2Controller map2Controller = Get.put(Map2Controller());
   final MapViewModel mapViewModelInstance = MapViewModel();
+  final KantorService kantorService = KantorService();
+  Map<String, LatLng> officeLocations = {};
 
   late GoogleMapController mapController;
-  final LatLng _center = const LatLng(-7.921048, 112.597329);
+  late CameraPosition initialCameraPosition;
   final Location location = Location();
-
   LatLng? currentLocation;
+
   String selectedOffice = '';
   double radius = 40.0;
+  MapType _currentMapType = MapType.normal;
 
   final markers = <MarkerId, Marker>{};
   final circles = <CircleId, Circle>{};
@@ -41,11 +45,8 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
-    _addMarkersAndCircles();
     _getCurrentLocation();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _showModalBottomSheet(context);
-    });
+    _fetchOfficeData();
   }
 
   void _onMapCreated(GoogleMapController controller) {
@@ -54,18 +55,22 @@ class _MapPageState extends State<MapPage> {
 
   void _getCurrentLocation() async {
     var locData = await location.getLocation();
+    final latLng = LatLng(locData.latitude!, locData.longitude!);
+
     setState(() {
-      currentLocation = LatLng(locData.latitude!, locData.longitude!);
+      currentLocation = latLng;
+      initialCameraPosition = CameraPosition(
+        target: latLng,
+        zoom: 13.5,
+      );
     });
   }
 
   void _addMarkersAndCircles() {
-    final offices = {
-      'Lab': LatLng(-7.921121, 112.599286),
-      'Kontrakan': LatLng(-7.924749, 112.585468),
-    };
+    markers.clear();
+    circles.clear();
 
-    offices.forEach((name, position) {
+    officeLocations.forEach((name, position) {
       markers[MarkerId(name)] = Marker(
         markerId: MarkerId(name),
         position: position,
@@ -85,14 +90,10 @@ class _MapPageState extends State<MapPage> {
     setState(() {});
   }
 
-  LatLng _getOfficeCoordinates(String name) {
-    return name == 'Lab'
-        ? const LatLng(-7.921121, 112.599286)
-        : const LatLng(-7.924749, 112.585468);
-  }
+  LatLng _getOfficeCoordinates(String name) => officeLocations[name]!;
 
   bool _isWithinRadius(LatLng current, LatLng target) {
-    const double earthRadius = 6371000; // in meters
+    const double earthRadius = 6371000;
     final dLat = _degToRad(target.latitude - current.latitude);
     final dLng = _degToRad(target.longitude - current.longitude);
 
@@ -141,10 +142,9 @@ class _MapPageState extends State<MapPage> {
       ),
       hint: const Text('Pilih Kantor'),
       value: selectedOffice.isNotEmpty ? selectedOffice : null,
-      items: const [
-        DropdownMenuItem(value: 'Lab', child: Text('Lab')),
-        DropdownMenuItem(value: 'Kontrakan', child: Text('Kontrakan')),
-      ],
+      items: officeLocations.keys.map((officeName) {
+        return DropdownMenuItem(value: officeName, child: Text(officeName));
+      }).toList(),
       onChanged: (value) {
         if (value != null) {
           setState(() {
@@ -153,7 +153,8 @@ class _MapPageState extends State<MapPage> {
 
           final target = _getOfficeCoordinates(value);
           mapController.animateCamera(
-            CameraUpdate.newCameraPosition(CameraPosition(target: target, zoom: 19)),
+            CameraUpdate.newCameraPosition(
+                CameraPosition(target: target, zoom: 16.5)),
           );
         }
       },
@@ -188,11 +189,14 @@ class _MapPageState extends State<MapPage> {
         }
 
         final target = _getOfficeCoordinates(selectedOffice);
-        if (currentLocation != null && _isWithinRadius(currentLocation!, target)) {
+        if (currentLocation != null &&
+            _isWithinRadius(currentLocation!, target)) {
           if (widget.isCheckIn) {
-            map2Controller.checkIn(selectedOffice, target.latitude, target.longitude);
+            map2Controller.checkIn(
+                selectedOffice, target.latitude, target.longitude);
           } else {
-            map2Controller.checkOut(selectedOffice, target.latitude, target.longitude);
+            map2Controller.checkOut(
+                selectedOffice, target.latitude, target.longitude);
           }
         } else {
           mapControllers.showOutOfRadiusModal(context);
@@ -201,7 +205,8 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-  Future<void> showInvalidTimeDialog(BuildContext context, bool isCheckIn) async {
+  Future<void> showInvalidTimeDialog(
+      BuildContext context, bool isCheckIn) async {
     final startTime = isCheckIn
         ? await TimeUtils.getCheckInStartTime()
         : await TimeUtils.getCheckOutStartTime();
@@ -219,11 +224,13 @@ class _MapPageState extends State<MapPage> {
       context: context,
       builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Icon(Icons.access_time_filled, color: Colors.redAccent, size: 50),
+        title: const Icon(Icons.access_time_filled,
+            color: Colors.redAccent, size: 50),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text("Diluar Waktu yang Diizinkan", style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text("Diluar Waktu yang Diizinkan",
+                style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
             Text(message, textAlign: TextAlign.center),
           ],
@@ -238,18 +245,62 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
+  Future<void> _fetchOfficeData() async {
+    officeLocations = await kantorService.getOfficeLocations();
+    _addMarkersAndCircles();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showModalBottomSheet(context);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Pilih Lokasi')),
-      body: GoogleMap(
-        onMapCreated: _onMapCreated,
-        myLocationEnabled: true,
-        myLocationButtonEnabled: true,
-        markers: markers.values.toSet(),
-        circles: circles.values.toSet(),
-        initialCameraPosition: CameraPosition(target: _center, zoom: 14.0),
+      appBar: AppBar(
+        title: const Text('Pilih Lokasi'),
+        actions: [
+          PopupMenuButton<MapType>(
+            icon: Icon(Icons.layers),
+            onSelected: (MapType selectedType) {
+              setState(() {
+                _currentMapType = selectedType;
+              });
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<MapType>>[
+              const PopupMenuItem<MapType>(
+                value: MapType.normal,
+                child: Text('Normal'),
+              ),
+              const PopupMenuItem<MapType>(
+                value: MapType.satellite,
+                child: Text('Satellite'),
+              ),
+              const PopupMenuItem<MapType>(
+                value: MapType.terrain,
+                child: Text('Terrain'),
+              ),
+              const PopupMenuItem<MapType>(
+                value: MapType.hybrid,
+                child: Text('Hybrid'),
+              ),
+            ],
+          ),
+        ],
       ),
+      body: currentLocation == null
+          ? const Center(child: CircularProgressIndicator())
+          : GoogleMap(
+              onMapCreated: _onMapCreated,
+              mapType: _currentMapType,
+              myLocationEnabled: true,
+              myLocationButtonEnabled: true,
+              markers: markers.values.toSet(),
+              circles: circles.values.toSet(),
+              initialCameraPosition: initialCameraPosition,
+            ),
     );
   }
 }
+
+
+ 

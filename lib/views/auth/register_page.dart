@@ -21,27 +21,41 @@ class RegisterPage extends GetView<AuthController> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Container(
-                      decoration: BoxDecoration(
-                          color: const Color.fromARGB(160, 255, 255, 255),
-                          borderRadius: BorderRadius.all(Radius.circular(20))),
-                      child: Image.asset('assets/Logo_Natusi.png', height: 80)),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(160, 255, 255, 255),
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                    ),
+                    child: Image.asset('assets/Logo_Natusi.png', height: 80),
+                  ),
                   SizedBox(height: 20),
-                  Text('REGISTER',
-                      style: GoogleFonts.roboto(
-                          textStyle: TextStyle(
-                              color: Colors.white,
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold))),
+                  Text(
+                    'REGISTER',
+                    style: GoogleFonts.roboto(
+                      textStyle: TextStyle(
+                        color: Colors.white,
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                   SizedBox(height: 0),
+
+                  // --- custom text fields with hint ---
                   CustomTextField(
-                      label: 'Nama', controller: controller.controllerNama),
+                    key:  Key('name'),
+                    label: 'Nama',
+                    controller: controller.controllerNama,
+                  ),
                   CustomTextField(
-                      label: 'Email/Username',
-                      controller: controller.controllerEmail),
+                    key:  Key('email'),
+                    label: 'Email/Username',
+                    controller: controller.controllerEmailreg,
+                  ),
                   Obx(() => CustomTextField(
+                    key:  Key('password'),
                         label: 'Password',
                         obscureText: !controller.isPasswordVisible.value,
-                        controller: controller.controllerPassword,
+                        controller: controller.controllerPasswordreg,
                         suffixIcon: IconButton(
                           icon: Icon(
                             controller.isPasswordVisible.value
@@ -55,6 +69,7 @@ class RegisterPage extends GetView<AuthController> {
                         ),
                       )),
                   Obx(() => CustomTextField(
+                    key:  Key('cpassword'),
                         label: 'Confirm Password',
                         obscureText: !controller.isCPasswordVisible.value,
                         controller: controller.controllerCPassword,
@@ -71,9 +86,10 @@ class RegisterPage extends GetView<AuthController> {
                         ),
                       )),
                   SizedBox(height: 5),
+
+                  // --- tombol daftar ---
                   GestureDetector(
                     onTap: () {
-                      //controller.register();
                       controller.registerWithFirebase();
                     },
                     child: Container(
@@ -92,22 +108,21 @@ class RegisterPage extends GetView<AuthController> {
                           ),
                         ],
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Daftar',
-                            style: GoogleFonts.roboto(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                            ),
+                      child: Center(
+                        child: Text(
+                          'Daftar',
+                          style: GoogleFonts.roboto(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
                   SizedBox(height: 20),
+
+                  // --- navigasi login ---
                   Padding(
                     padding: const EdgeInsets.only(left: 30.0, right: 20),
                     child: Row(
@@ -121,7 +136,6 @@ class RegisterPage extends GetView<AuthController> {
                         IconButton(
                           icon: Icon(Icons.arrow_forward, color: Colors.white),
                           onPressed: () {
-                            //Navigator.pop(context);
                             Get.toNamed(Routes.init);
                           },
                         ),
@@ -186,5 +200,4 @@ class CustomTextField extends StatelessWidget {
       ),
     );
   }
-
 }

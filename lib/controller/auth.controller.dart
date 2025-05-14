@@ -18,13 +18,16 @@ class AuthController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   TextEditingController controllerNama = TextEditingController();
-  TextEditingController controllerEmail = TextEditingController();
-  TextEditingController controllerPassword = TextEditingController();
+  TextEditingController controllerEmaillog = TextEditingController();
+  TextEditingController controllerPasswordlog = TextEditingController();
+  TextEditingController controllerEmailreg = TextEditingController();
+  TextEditingController controllerPasswordreg = TextEditingController();
   TextEditingController controllerCPassword = TextEditingController();
 
   var isKaryawan = false.obs;
   var isMagang = false.obs;
-  var userType = ''.obs; // Untuk menyimpan user_type
+  var userType = ''.obs;
+  var rememberMe = false.obs;
 
   RxBool isPasswordVisible = false.obs;
   RxBool isCPasswordVisible = false.obs;
@@ -38,6 +41,15 @@ class AuthController extends GetxController {
     if (isLogin) {
       // Menunggu untuk memastikan status login, lalu periksa user_type
       _checkUserType();
+    }
+
+    final savedEmail = _storage.getSavedEmail();
+    //final savedPassword = _storage.getSavedPassword();
+
+    if (savedEmail != null) {
+      controllerEmaillog.text = savedEmail;
+      //controllerPasswordlog.text = savedPassword;
+      rememberMe.value = true;
     }
   }
 
@@ -85,15 +97,15 @@ class AuthController extends GetxController {
   bool checkLogin() {
     List<String> errors = [];
 
-    if (controllerEmail.text.isEmpty) {
+    if (controllerEmaillog.text.isEmpty) {
       errors.add('Email harus diisi');
-    } else if (!controllerEmail.text.contains('@')) {
+    } else if (!controllerEmaillog.text.contains('@')) {
       errors.add('Email harus mengandung simbol @');
     }
 
-    if (controllerPassword.text.isEmpty) {
+    if (controllerPasswordlog.text.isEmpty) {
       errors.add('Password harus diisi');
-    } else if (controllerPassword.text.length < 8) {
+    } else if (controllerPasswordlog.text.length < 8) {
       errors.add('Password harus lebih dari 8 karakter');
     }
 
@@ -111,8 +123,8 @@ class AuthController extends GetxController {
 
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: controllerEmail.text.trim(),
-        password: controllerPassword.text,
+        email: controllerEmaillog.text.trim(),
+        password: controllerPasswordlog.text,
       );
 
       User? user = userCredential.user;
@@ -123,32 +135,40 @@ class AuthController extends GetxController {
         // Ambil data pengguna dari Firestore untuk mendapatkan user_type
         DocumentSnapshot userDoc = await _firestore
             .collection('users')
-            .doc(controllerEmail.text)
+            .doc(controllerEmaillog.text.trim())
             .get();
         if (userDoc.exists) {
-          String userType = userDoc[
-              'user_type']; // Asumsikan field 'user_type' ada di Firestore
+          String userType = userDoc['user_type'];
 
-          // Tampilkan snackbar sukses
+          // Simpan email dan password setelah login berhasil
+          _storage.saveLoginData(
+              controllerEmaillog.text.trim(),);
+
           showSnackbar(
-              'Login Berhasil',
-              'Selamat datang, $email!',
-              Colors.green,
-              Colors.white,
-              const Duration(seconds: 2),
-              SnackPosition.BOTTOM);
+            'Login Berhasil',
+            'Selamat datang, $email!',
+            Colors.green,
+            Colors.white,
+            const Duration(seconds: 2),
+            SnackPosition.BOTTOM,
+          );
 
           _storage.login();
 
           // Alihkan berdasarkan user_type
           if (userType == 'karyawan') {
-            Get.offAllNamed(
-                Routes.dahsboard); // Menuju ke halaman DashboardPage
+            Get.offAllNamed(Routes.dahsboard);
           } else if (userType == 'admin') {
-            Get.offAllNamed(Routes.init); // Menuju ke halaman AdminPage
+            Get.offAllNamed(Routes.init);
           } else {
-            showSnackbar('Kesalahan', 'Tipe pengguna tidak dikenal', Colors.red,
-                Colors.white, const Duration(seconds: 2), SnackPosition.BOTTOM);
+            showSnackbar(
+              'Kesalahan',
+              'Tipe pengguna tidak dikenal',
+              Colors.red,
+              Colors.white,
+              const Duration(seconds: 2),
+              SnackPosition.BOTTOM,
+            );
           }
         } else {
           showSnackbar(
@@ -178,23 +198,22 @@ class AuthController extends GetxController {
       errors.add('Nama hanya boleh huruf dan spasi');
     }
 
-    if (controllerEmail.text.isEmpty) {
+    if (controllerEmailreg.text.isEmpty) {
       errors.add('Email harus diisi');
-    } else if (!controllerEmail.text.contains('@')) {
+    } else if (!controllerEmailreg.text.contains('@')) {
       errors.add('Email harus mengandung simbol @');
     }
 
-    if (controllerPassword.text.isEmpty) {
+    if (controllerPasswordreg.text.isEmpty) {
       errors.add('Password harus diisi');
-    } else if (controllerPassword.text.length < 8) {
+    } else if (controllerPasswordreg.text.length < 8) {
       errors.add('Password harus lebih dari 8 karakter');
     }
     if (controllerCPassword.text.isEmpty) {
       errors.add('confirm passworde tidak boleh kosong');
-    } else if (controllerPassword.text != controllerCPassword.text) {
+    } else if (controllerPasswordreg.text != controllerCPassword.text) {
       errors.add('Password dan konfirmasi password tidak cocok');
     }
-    
 
     if (errors.isNotEmpty) {
       showSnackbar('Kesalahan', errors.join('\n'), Colors.red, Colors.white,
@@ -211,17 +230,17 @@ class AuthController extends GetxController {
       // Registrasi dengan Firebase Authentication
       UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
-        email: controllerEmail.text.trim(),
-        password: controllerPassword.text,
+        email: controllerEmailreg.text.trim(),
+        password: controllerPasswordreg.text,
       );
 
       User? user = userCredential.user;
 
       if (user != null) {
         // Simpan data pengguna ke Firestore
-        await _firestore.collection('users').doc(controllerEmail.text).set({
+        await _firestore.collection('users').doc(controllerEmailreg.text).set({
           'name': controllerNama.text.trim(),
-          'email': controllerEmail.text.trim(),
+          'email': controllerEmailreg.text.trim(),
           'created_at': DateTime.now().toIso8601String(),
           'user_type': 'karyawan',
           'izin': 4,

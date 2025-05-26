@@ -5,6 +5,7 @@ import 'package:absensimagang/views/Admin/admin_dashboard.dart';
 import 'package:absensimagang/controller/auth.controller.dart';
 import 'package:absensimagang/views/Admin/list_karyawan_page.dart';
 import 'package:absensimagang/views/auth/login_page.dart';
+import 'package:absensimagang/views/dashboard/izin.dart';
 import 'package:get/route_manager.dart';
 import 'package:get/get.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
@@ -52,6 +53,13 @@ List <GetPage> pages=[
   GetPage(
     name: Routes.listkaryawan, 
     page: () => ListKaryawanPage(),
+    //binding: DashboardBinding(),
+    // transition: Transition.cupertino,
+    // transitionDuration: Duration(milliseconds: 800),
+  ),
+  GetPage(
+    name: Routes.izin, 
+    page: () => IzinPage(),
     //binding: DashboardBinding(),
     // transition: Transition.cupertino,
     // transitionDuration: Duration(milliseconds: 800),

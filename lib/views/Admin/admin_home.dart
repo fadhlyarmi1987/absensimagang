@@ -12,53 +12,63 @@ class AdminPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Halaman Admin"),
-        backgroundColor: Colors.red.shade700,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)),
-                    title: Row(
-                      children: [
-                        Icon(Icons.logout, color: Colors.redAccent),
-                        SizedBox(width: 10),
-                        Text("Konfirmasi Logout"),
-                      ],
+  title: const Text("Halaman Admin"),
+  backgroundColor: Colors.red.shade700,
+  actions: [
+    Padding(
+      padding: const EdgeInsets.only(right: 10),
+      child: InkWell(
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15)),
+                title: Row(
+                  children: [
+                    Icon(Icons.logout, color: Colors.redAccent),
+                    SizedBox(width: 10),
+                    Text("Konfirmasi Logout"),
+                  ],
+                ),
+                content: Text("Apakah Anda yakin ingin keluar dari aplikasi?"),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text("Batal"),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.redAccent,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
                     ),
-                    content:
-                        Text("Apakah Anda yakin ingin keluar dari aplikasi?"),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: Text("Batal"),
-                      ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.redAccent,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8)),
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          controller.logout();
-                        },
-                        child: Text("Keluar",
-                            style: TextStyle(color: Colors.white)),
-                      ),
-                    ],
-                  );
-                },
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      controller.logout();
+                    },
+                    child:
+                        Text("Keluar", style: TextStyle(color: Colors.white)),
+                  ),
+                ],
               );
             },
-          ),
-        ],
+          );
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Icon(Icons.logout),
+            SizedBox(height: 2),
+            Text("Logout", style: TextStyle(fontSize: 10)),
+          ],
+        ),
       ),
+    ),
+  ],
+),
+
       body: Container(
         width: double.infinity,
         height: double.infinity,

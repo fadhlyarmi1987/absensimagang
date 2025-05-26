@@ -4,12 +4,12 @@ import 'package:intl/intl.dart';
 
 import '../../utils/time_utils.dart';
 
-class ProfileadminPage extends StatefulWidget {
+class AturWaktu extends StatefulWidget {
   @override
-  _ProfileadminPageState createState() => _ProfileadminPageState();
+  _AturWaktuState createState() => _AturWaktuState();
 }
 
-class _ProfileadminPageState extends State<ProfileadminPage> {
+class _AturWaktuState extends State<AturWaktu> {
   TimeOfDay? _checkInStart;
   TimeOfDay? _checkInEnd;
   TimeOfDay? _checkOutStart;
@@ -72,22 +72,22 @@ class _ProfileadminPageState extends State<ProfileadminPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Atur Waktu Presensi'),
-        backgroundColor: Colors.red.shade700
-      ),
+          title: Text('Atur Waktu Presensi'),
+          backgroundColor: Colors.red.shade700),
       body: Container(
-        color:
-            const Color.fromARGB(255, 193, 193, 193), // full background dark grey
+        color: const Color.fromARGB(
+            255, 193, 193, 193), // full background dark grey
         width: double.infinity,
         height: double.infinity,
         padding: const EdgeInsets.fromLTRB(16, 80, 16, 50),
         child: SingleChildScrollView(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                  maxWidth: 500), // supaya gak terlalu lebar di tablet
-              child: Container(
-                padding: EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Card 1: Check-In
+              Container(
+                margin: EdgeInsets.only(bottom: 20),
+                padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
@@ -100,48 +100,82 @@ class _ProfileadminPageState extends State<ProfileadminPage> {
                   ],
                 ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text("Waktu Check-In",
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green)),
+                    SizedBox(height: 10),
                     _buildTimePickerTile("Check-In Start", _checkInStart,
                         (val) => setState(() => _checkInStart = val)),
                     _buildTimePickerTile("Check-In End", _checkInEnd,
                         (val) => setState(() => _checkInEnd = val)),
+                  ],
+                ),
+              ),
+
+              // Card 2: Check-Out
+              Container(
+                margin: EdgeInsets.only(bottom: 20),
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 10,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Waktu Check-Out",
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue)),
+                    SizedBox(height: 10),
                     _buildTimePickerTile("Check-Out Start", _checkOutStart,
                         (val) => setState(() => _checkOutStart = val)),
                     _buildTimePickerTile("Check-Out End", _checkOutEnd,
                         (val) => setState(() => _checkOutEnd = val)),
-                    SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () async {
-                        await _saveTimes();
-                        _showSuccessDialog();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 40, vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        elevation: 4,
-                        textStyle: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.check),
-                          SizedBox(width: 8),
-                          Text('Simpan Waktu'),
-                        ],
-                      ),
-                    )
                   ],
                 ),
               ),
-            ),
+
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  await _saveTimes();
+                  _showSuccessDialog();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  elevation: 4,
+                  textStyle:
+                      TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.check),
+                    SizedBox(width: 8),
+                    Text('Simpan Waktu'),
+                  ],
+                ),
+              )
+            ],
           ),
         ),
       ),

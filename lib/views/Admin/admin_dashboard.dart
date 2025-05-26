@@ -3,7 +3,7 @@ import 'package:absensimagang/controller/auth.controller.dart';
 import 'package:absensimagang/views/Admin/admin_home.dart';
 import 'package:absensimagang/views/Admin/atur_lokasi.dart';
 import 'package:absensimagang/views/Admin/list_karyawan_page.dart';
-import 'package:absensimagang/views/Admin/profileadmin_page.dart';
+import 'package:absensimagang/views/Admin/aturwaktu_page.dart';
 import 'package:absensimagang/views/dashboard/profile.dart'; 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -26,7 +26,7 @@ class AdminDashboard extends StatelessWidget {
       AdminPage(),
       ListKaryawanPage(),
       SendNotificationPage(), // Halaman kirim notifikasi
-      ProfileadminPage(), // Placeholder halaman Profil
+      AturWaktu(), // Placeholder halaman Profil
       AturLokasiPage(),
 
     ];
@@ -55,8 +55,8 @@ class AdminDashboard extends StatelessWidget {
                 label: 'Kirim Notifikasi', // Label untuk menu notifikasi
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.person),
-                label: 'Profil',
+                icon: Icon(Icons.access_time_filled),
+                label: 'atur waktu',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.map),

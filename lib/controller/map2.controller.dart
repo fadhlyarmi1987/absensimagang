@@ -3,18 +3,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../route/page.dart';
 
-class Map2Controller extends GetxController {
+class MapController extends GetxController {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final FirebaseAuth auth = FirebaseAuth.instance;
-
   final Storage storage = Storage();
+
   var name = ''.obs;
   var email = ''.obs;
 
-  // Listener untuk memperbarui data pengguna saat ada perubahan
   @override
   void onInit() {
     super.onInit();
@@ -30,7 +30,6 @@ class Map2Controller extends GetxController {
       String officeName, double latitude, double longitude) async {
     try {
       final user = auth.currentUser;
-
       if (user == null) {
         Get.defaultDialog(
           title: 'Error',
@@ -47,45 +46,29 @@ class Map2Controller extends GetxController {
       final now = DateTime.now();
       final formattedDate =
           '${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}';
+      final checkInDocId = '$formattedDate-checkin';
 
-      await firestore
+      final absensiRef = firestore
           .collection('users')
           .doc(user.email)
           .collection('absensi')
-          .add({
+          .doc(checkInDocId);
+
+      final checkInDoc = await absensiRef.get();
+
+      if (checkInDoc.exists) {
+        showAlreadyCheckedInDialog();
+        return;
+      }
+
+      await absensiRef.set({
         'office': officeName,
         'latitude': latitude,
         'longitude': longitude,
         'type': 'check-in',
         'timestamp': FieldValue.serverTimestamp(),
       });
-
-      Get.defaultDialog(
-        title: 'Berhasil',
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.check_circle,
-              color: Colors.green,
-              size: 50,
-            ),
-            SizedBox(height: 10),
-            Text(
-              '$name Berhasil Absen Masuk',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-        textConfirm: 'OK',
-        confirmTextColor: Colors.white,
-        buttonColor: Colors.green,
-        onConfirm: () {
-          Get.back(); // Tutup dialog
-          Get.offAllNamed(Routes.dahsboard); // Pindah ke dashboard
-        },
-      );
+      showSuccessAttendanceDialog(name, 'check-in');
     } catch (e) {
       Get.defaultDialog(
         title: 'Error',
@@ -96,130 +79,167 @@ class Map2Controller extends GetxController {
     }
   }
 
-  // Fungsi untuk Check-Out
   Future<void> checkOut(
       String officeName, double latitude, double longitude) async {
     try {
-      // Ambil userId dari pengguna yang sedang login
       final user = auth.currentUser;
-
       if (user == null) {
         Get.snackbar('Error', 'Pengguna tidak terdeteksi.');
         return;
       }
 
-      // Ambil nama pengguna dari Firestore berdasarkan email pengguna
       final userDoc = await firestore.collection('users').doc(user.email).get();
       final name = userDoc.data()?['name'] ?? 'Pengguna';
 
-      // Format tanggal, bulan, dan tahun
       final now = DateTime.now();
       final formattedDate =
           '${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}';
+      final checkOutDocId = '$formattedDate-checkout';
 
-      // Menambahkan data ke subkoleksi `absensi` menggunakan add() agar menambah dokumen baru
-      await firestore
-          .collection('users') // Koleksi pengguna
-          .doc(user.email) // Dokumen pengguna berdasarkan email
-          .collection('absensi') // Subkoleksi absensi
-          .add({
+      final absensiRef = firestore
+          .collection('users')
+          .doc(user.email)
+          .collection('absensi')
+          .doc(checkOutDocId);
+
+      final checkOutDoc = await absensiRef.get();
+
+      if (checkOutDoc.exists) {
+        showAlreadyCheckedOutDialog();
+        return;
+      }
+
+      await absensiRef.set({
         'office': officeName,
         'latitude': latitude,
         'longitude': longitude,
-        'type': 'check-out', // Menyimpan data check-out
+        'type': 'check-out',
         'timestamp': FieldValue.serverTimestamp(),
       });
-
-      Get.defaultDialog(
-        title: 'Berhasil',
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.check_circle,
-              color: Colors.green,
-              size: 50,
-            ),
-            SizedBox(height: 10),
-            Text(
-              '$name Berhasil Absen Pulang',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-        textConfirm: 'OK',
-        confirmTextColor: Colors.white,
-        buttonColor: Colors.green,
-        onConfirm: () {
-          Get.back(); // Tutup dialog
-          Get.offAllNamed(Routes.dahsboard); // Pindah ke dashboard
-        },
-      );
+      showSuccessAttendanceDialog(name, 'check-out');
     } catch (e) {
       Get.snackbar('Error', 'Gagal melakukan check-out: $e');
     }
   }
 
-  void showOutOfRadiusModal(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          title: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Ganti dengan animasi atau ikon statis
-              FadeInXMark(), // atau bisa ganti: Icon(Icons.cancel, color: Colors.red, size: 50),
-              SizedBox(height: 10),
-              Text(
-                'UUUPPPSSS...',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red,
-                ),
-              ),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(
-                'Anda berada di luar radius yang ditentukan.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16),
-              ),
-              SizedBox(height: 20),
-            ],
-          ),
-          actions: <Widget>[
-            Center(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: Text(
-                  'OK',
-                  style: TextStyle(color: Colors.white),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ),
-          ],
-        );
-      },
-    );}
-}
+  void showSuccessAttendanceDialog(String name, String type) {
+    final actionText = type.toLowerCase() == 'check-in' ? 'Masuk' : 'Pulang';
 
+    Get.defaultDialog(
+      title: 'Berhasil',
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.check_circle_outline, color: Colors.green, size: 60),
+          SizedBox(height: 12),
+          Text(
+            '$name Berhasil Absen $actionText',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: Colors.green[800],
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 8),
+          Text(
+            'Terima kasih sudah melakukan absensi tepat waktu.',
+            style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+      textConfirm: 'OK',
+      confirmTextColor: Colors.white,
+      buttonColor: Colors.green,
+      onConfirm: () {
+        Get.back();
+        Get.offAllNamed(Routes.dahsboard);
+      },
+    );
+  }
+
+  void showAlreadyCheckedInDialog() {
+    Get.defaultDialog(
+      title: 'Sudah Check-In',
+      titleStyle: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        color: Colors.green,
+      ),
+      content: Column(
+        children: [
+          Icon(Icons.task_alt, color: Colors.green, size: 60),
+          SizedBox(height: 15),
+          Text(
+            'Anda sudah melakukan check-in\nhari ini.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16, height: 1.4),
+          ),
+        ],
+      ),
+      textConfirm: 'OK',
+      confirmTextColor: Colors.white,
+      buttonColor: Colors.red,
+      onConfirm: () => Get.back(),
+      radius: 12,
+    );
+  }
+
+  void showAlreadyCheckedOutDialog() {
+    Get.defaultDialog(
+      title: 'Sudah Check-Out',
+      titleStyle: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        color: Colors.blue,
+      ),
+      content: Column(
+        children: [
+          Icon(Icons.task_alt, color: Colors.blue, size: 60),
+          SizedBox(height: 15),
+          Text(
+            'Anda sudah melakukan check-in\nhari ini.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16, height: 1.4),
+          ),
+        ],
+      ),
+      textConfirm: 'OK',
+      confirmTextColor: Colors.white,
+      buttonColor: Colors.red,
+      onConfirm: () => Get.back(),
+      radius: 12,
+    );
+  }
+
+  void showOutOfRadiusModal(BuildContext context) {
+    Get.defaultDialog(
+      title: 'UUUPPPSSS...',
+      titleStyle: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        color: Colors.red,
+      ),
+      content: Column(
+        children: [
+          Icon(Icons.location_off_rounded, color: Colors.red, size: 60),
+          SizedBox(height: 15),
+          Text(
+            'Anda berada di luar radius yang\nditetapkan untuk absen.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16),
+          ),
+        ],
+      ),
+      textConfirm: 'OK',
+      confirmTextColor: Colors.white,
+      buttonColor: Colors.red,
+      onConfirm: () => Get.back(),
+      radius: 12,
+    );
+  }
+}
 
 class AnimatedCheckmark extends StatefulWidget {
   @override
@@ -273,50 +293,6 @@ class _AnimatedCheckmarkState extends State<AnimatedCheckmark>
           ],
         );
       },
-    );
-  }
-}
-
-class FadeInXMark extends StatefulWidget {
-  @override
-  _FadeInXMarkState createState() => _FadeInXMarkState();
-}
-
-class _FadeInXMarkState extends State<FadeInXMark>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    );
-
-    _animation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
-    );
-
-    _controller.forward();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _animation,
-      child: Icon(
-        Icons.cancel,
-        color: Colors.red,
-        size: 50,
-      ),
     );
   }
 }

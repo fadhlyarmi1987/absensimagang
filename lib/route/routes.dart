@@ -8,4 +8,5 @@ abstract class Routes {
   static const String adminpage = '/Adminpage';
   static const String admindashboard = '/Admindashboard';
   static const String listkaryawan = '/Listkaryawan';
+  static const String izin = '/Izin';
 }

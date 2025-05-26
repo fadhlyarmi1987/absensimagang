@@ -30,6 +30,7 @@ class AuthController extends GetxController {
   var rememberMe = false.obs;
 
   RxBool isPasswordVisible = false.obs;
+  RxBool isPasswordVisiblelogin = false.obs;
   RxBool isCPasswordVisible = false.obs;
 
   bool isLogin = false;

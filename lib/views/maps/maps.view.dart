@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:location/location.dart';
@@ -7,9 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:absensimagang/controller/map2.controller.dart';
 import 'package:absensimagang/data/services/auth.service.dart';
-import 'package:absensimagang/data/services/map.service.dart';
 import 'package:absensimagang/utils/time_utils.dart';
-import 'package:absensimagang/views/maps/map.controller.dart';
 
 import '../../data/services/kantor.service.dart';
 
@@ -25,12 +24,11 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
   final mapControllers = MapController();
   final AuthService service = AuthService();
-  final Map2Controller map2Controller = Get.put(Map2Controller());
-  final MapViewModel mapViewModelInstance = MapViewModel();
+  final MapController mapController = Get.put(MapController());
   final KantorService kantorService = KantorService();
   Map<String, LatLng> officeLocations = {};
 
-  late GoogleMapController mapController;
+  late GoogleMapController mapGController;
   late CameraPosition initialCameraPosition;
   final Location location = Location();
   LatLng? currentLocation;
@@ -50,7 +48,7 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
+    mapGController = controller;
   }
 
   void _getCurrentLocation() async {
@@ -112,19 +110,62 @@ class _MapPageState extends State<MapPage> {
   void _showModalBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+      ),
+      backgroundColor: Colors.transparent,
       builder: (_) {
         return Container(
-          height: 220,
+          height: 230,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color.fromARGB(255, 235, 6, 6),
+                Colors.white,
+              ],
+              stops: [0.06, 0.54],
+            ),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+          ),
           padding: const EdgeInsets.all(16),
           child: Column(
+            crossAxisAlignment:
+                CrossAxisAlignment.stretch, // Agar tombol full width
             children: [
-              const Text(
-                'Pilih Lokasi Kantor',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 5,
+                  margin: const EdgeInsets.only(bottom: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.white60,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
               ),
-              const SizedBox(height: 10),
+              Center(
+                child: RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                    children: [
+                      const TextSpan(text: 'Pilih Lokasi Kantor untuk '),
+                      TextSpan(
+                        text: widget.isCheckIn ? 'check-in' : 'check-out',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
               _buildOfficeDropdown(),
-              const SizedBox(height: 10),
+              const SizedBox(height: 16),
               _buildSubmitButton(context),
             ],
           ),
@@ -134,30 +175,56 @@ class _MapPageState extends State<MapPage> {
   }
 
   Widget _buildOfficeDropdown() {
-    return DropdownButtonFormField<String>(
-      decoration: InputDecoration(
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-        filled: true,
-        fillColor: const Color.fromARGB(255, 232, 242, 251),
-      ),
-      hint: const Text('Pilih Kantor'),
-      value: selectedOffice.isNotEmpty ? selectedOffice : null,
-      items: officeLocations.keys.map((officeName) {
-        return DropdownMenuItem(value: officeName, child: Text(officeName));
-      }).toList(),
-      onChanged: (value) {
-        if (value != null) {
-          setState(() {
-            selectedOffice = value;
-          });
+    return DropdownButtonHideUnderline(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Colors.grey.shade400),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+        child: DropdownButtonFormField<String>(
+          value: selectedOffice.isNotEmpty ? selectedOffice : null,
+          icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
+          isExpanded: true,
+          decoration: const InputDecoration.collapsed(
+              hintText: ''), // remove default decoration
+          hint: Center(
+            child: Text(
+              'Pilih Kantor',
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.grey.shade600,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          style: const TextStyle(fontSize: 16, color: Colors.black),
+          items: officeLocations.keys.map((officeName) {
+            return DropdownMenuItem(
+              value: officeName,
+              child: Text(
+                officeName,
+                textAlign: TextAlign.center,
+              ),
+            );
+          }).toList(),
+          onChanged: (value) {
+            if (value != null) {
+              setState(() {
+                selectedOffice = value;
+              });
 
-          final target = _getOfficeCoordinates(value);
-          mapController.animateCamera(
-            CameraUpdate.newCameraPosition(
-                CameraPosition(target: target, zoom: 16.5)),
-          );
-        }
-      },
+              final target = _getOfficeCoordinates(value);
+              mapGController.animateCamera(
+                CameraUpdate.newCameraPosition(
+                  CameraPosition(target: target, zoom: 16.5),
+                ),
+              );
+            }
+          },
+        ),
+      ),
     );
   }
 
@@ -192,10 +259,10 @@ class _MapPageState extends State<MapPage> {
         if (currentLocation != null &&
             _isWithinRadius(currentLocation!, target)) {
           if (widget.isCheckIn) {
-            map2Controller.checkIn(
+            mapController.checkIn(
                 selectedOffice, target.latitude, target.longitude);
           } else {
-            map2Controller.checkOut(
+            mapController.checkOut(
                 selectedOffice, target.latitude, target.longitude);
           }
         } else {
@@ -256,37 +323,93 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Pilih Lokasi'),
-        actions: [
-          PopupMenuButton<MapType>(
-            icon: Icon(Icons.layers),
-            onSelected: (MapType selectedType) {
-              setState(() {
-                _currentMapType = selectedType;
-              });
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<MapType>>[
-              const PopupMenuItem<MapType>(
-                value: MapType.normal,
-                child: Text('Normal'),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kToolbarHeight),
+        child: ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: Container(
+              color: Colors.grey.withOpacity(0.5),
+              child: SafeArea(
+                bottom: false,
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    SizedBox(width: 8),
+                    Text(
+                      'Pilih Lokasi',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Spacer(),
+                    PopupMenuButton<MapType>(
+                      icon: Icon(Icons.layers, color: Colors.blueAccent),
+                      onSelected: (MapType selectedType) {
+                        setState(() {
+                          _currentMapType = selectedType;
+                        });
+                      },
+                      itemBuilder: (BuildContext context) =>
+                          <PopupMenuEntry<MapType>>[
+                        PopupMenuItem<MapType>(
+                          value: MapType.normal,
+                          child: Row(
+                            children: [
+                              Icon(Icons.map, color: Colors.green),
+                              const SizedBox(width: 8),
+                              Text('Normal'),
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem<MapType>(
+                          value: MapType.satellite,
+                          child: Row(
+                            children: [
+                              Icon(Icons.satellite_alt, color: Colors.orange),
+                              const SizedBox(width: 8),
+                              Text('Satellite'),
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem<MapType>(
+                          value: MapType.terrain,
+                          child: Row(
+                            children: [
+                              Icon(Icons.terrain, color: Colors.brown),
+                              const SizedBox(width: 8),
+                              Text('Terrain'),
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem<MapType>(
+                          value: MapType.hybrid,
+                          child: Row(
+                            children: [
+                              Icon(Icons.layers_outlined, color: Colors.blue),
+                              const SizedBox(width: 8),
+                              Text('Hybrid'),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(width: 8),
+                  ],
+                ),
               ),
-              const PopupMenuItem<MapType>(
-                value: MapType.satellite,
-                child: Text('Satellite'),
-              ),
-              const PopupMenuItem<MapType>(
-                value: MapType.terrain,
-                child: Text('Terrain'),
-              ),
-              const PopupMenuItem<MapType>(
-                value: MapType.hybrid,
-                child: Text('Hybrid'),
-              ),
-            ],
+            ),
           ),
-        ],
+        ),
       ),
+
       body: currentLocation == null
           ? const Center(child: CircularProgressIndicator())
           : GoogleMap(
@@ -301,6 +424,3 @@ class _MapPageState extends State<MapPage> {
     );
   }
 }
-
-
- 

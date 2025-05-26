@@ -92,7 +92,8 @@ class DashboardController extends GetxController {
     for (var doc in snapshot.docs) {
       final data = doc.data();
       final timestamp = (data['timestamp'] as Timestamp).toDate();
-      final dateKey = "${timestamp.year}-${timestamp.month}-${timestamp.day}";
+      final formattedDate = DateFormat("EEEE, dd MMMM yyyy", "id_ID").format(timestamp);
+      final dateKey = "${formattedDate}";
 
       // Cek tipe absensi dan simpan di map
       if (!groupedData.containsKey(dateKey)) {

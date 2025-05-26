@@ -17,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
       Get.put(AuthController());
     }
 
-    Future.delayed(Duration(milliseconds: 3000), () {
+    Future.delayed(Duration(milliseconds: 30), () {
       bool isLogin = Get.find<AuthController>().isLogin;
       String userType = Get.find<AuthController>().userType.value;
 

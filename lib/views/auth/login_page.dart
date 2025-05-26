@@ -58,16 +58,27 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     SizedBox(height: 20),
                     CustomTextField(
-                      key: Key('emailField'), // <- tambah Key disini
+                      key: Key('emailField'), 
                       label: 'Email/Username',
                       controller: controller.controllerEmaillog,
                     ),
-                    CustomTextField(
-                      key: Key('passwordField'), // <- tambah Key disini
-                      label: 'Password',
-                      obscureText: true,
-                      controller: controller.controllerPasswordlog,
-                    ),
+                     Obx(() => CustomTextField(
+                    key:  Key('password'),
+                        label: 'Password',
+                        obscureText: !controller.isPasswordVisiblelogin.value,
+                        controller: controller.controllerPasswordlog,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            controller.isPasswordVisiblelogin.value
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            controller.isPasswordVisiblelogin.value =
+                                !controller.isPasswordVisiblelogin.value;
+                          },
+                        ),
+                      )),
                     SizedBox(height: 5),
                     ElevatedButton(
                       onPressed: () {
@@ -75,12 +86,12 @@ class _LoginPageState extends State<LoginPage> {
                       },
                       key: Key('login'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green, // Warna tombol
+                        backgroundColor: Colors.green, 
                         shape: RoundedRectangleBorder(
                           borderRadius:
-                              BorderRadius.circular(100), // Biar tetap bulet
+                              BorderRadius.circular(100), 
                         ),
-                        elevation: 5, // Bayangan tombol
+                        elevation: 5, 
                         minimumSize: Size(100, 50), // Ukuran tombol
                         shadowColor: Colors.black.withOpacity(0.3),
                       ),

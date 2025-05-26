@@ -83,10 +83,12 @@ class _IzinPageState extends State<IzinPage> {
       return;
     }
 
-    if (!RegExp(r'[a-zA-Z]').hasMatch(keterangan)) {
-      showTopSnackBar('Keterangan harus mengandung huruf', Colors.orange[800]!);
-      return;
-    }
+    /*
+if (!RegExp(r'[a-zA-Z]').hasMatch(keterangan)) {
+  showTopSnackBar('Keterangan harus mengandung huruf', Colors.orange[800]!);
+  return;
+}
+*/
 
     try {
       await _firestoreService.ajukanIzin(keterangan);
@@ -103,87 +105,89 @@ class _IzinPageState extends State<IzinPage> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-  body: Stack(
-    children: [
-      // Background Gradient
-      Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color.fromARGB(255, 235, 6, 6),
-              Colors.white,
-            ],
-            stops: [0.06, 0.54],
+      body: Stack(
+        children: [
+          // Background Gradient
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color.fromARGB(255, 235, 6, 6),
+                  Colors.white,
+                ],
+                stops: [0.06, 0.54],
+              ),
+            ),
           ),
-        ),
-      ),
 
-      // Konten scroll + refresh
-      SafeArea(
-        child: RefreshIndicator(
-          onRefresh: _getCurrentIzin,
-          child: Container(
-            height: 800,
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 40.0),
-                child: Center(
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(111, 255, 255, 255),
-                      borderRadius: BorderRadius.circular(5),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
-                          spreadRadius: 2,
-                          blurRadius: 7,
-                          offset: const Offset(0, 7),
-                        )
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Ajukan Izin',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
+          // Konten scroll + refresh
+          SafeArea(
+            child: RefreshIndicator(
+              onRefresh: _getCurrentIzin,
+              child: Container(
+                height: 800,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 40.0),
+                    child: Center(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(111, 255, 255, 255),
+                          borderRadius: BorderRadius.circular(5),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              spreadRadius: 2,
+                              blurRadius: 7,
+                              offset: const Offset(0, 7),
+                            )
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Ajukan Izin',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Sisa Izin: $_currentIzin',
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                              const SizedBox(height: 12),
+                              const Text(
+                                'Keterangan Izin',
+                                style: TextStyle(fontWeight: FontWeight.w500),
+                              ),
+                              const SizedBox(height: 8),
+                              TextField(
+                                controller: _keteranganController,
+                                maxLines: 5,
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  hintText: 'Tuliskan keterangan izin Anda...',
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              Center(
+                                child: ElevatedButton(
+                                  onPressed: _ajukanIzin,
+                                  child: const Text('Ajukan Izin'),
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Sisa Izin: $_currentIzin',
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                          const SizedBox(height: 12),
-                          const Text(
-                            'Keterangan Izin',
-                            style: TextStyle(fontWeight: FontWeight.w500),
-                          ),
-                          const SizedBox(height: 8),
-                          TextField(
-                            controller: _keteranganController,
-                            maxLines: 5,
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: 'Tuliskan keterangan izin Anda...',
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          Center(
-                            child: ElevatedButton(
-                              onPressed: _ajukanIzin,
-                              child: const Text('Ajukan Izin'),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -191,11 +195,8 @@ class _IzinPageState extends State<IzinPage> {
               ),
             ),
           ),
-        ),
+        ],
       ),
-    ],
-  ),
-);
-
+    );
   }
 }

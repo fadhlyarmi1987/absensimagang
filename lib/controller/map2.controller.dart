@@ -3,8 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-
 import '../route/page.dart';
 
 class MapController extends GetxController {
@@ -199,7 +197,7 @@ class MapController extends GetxController {
           Icon(Icons.task_alt, color: Colors.blue, size: 60),
           SizedBox(height: 15),
           Text(
-            'Anda sudah melakukan check-in\nhari ini.',
+            'Anda sudah melakukan check-out\nhari ini.',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 16, height: 1.4),
           ),

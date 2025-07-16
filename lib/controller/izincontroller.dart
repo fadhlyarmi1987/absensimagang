@@ -30,7 +30,8 @@ class IzinController {
       // Simpan data izin pada subkoleksi 'absensi' dengan nama dokumen 'izin'
       final izinData = {
         'keterangan': keterangan,
-        'tanggal': Timestamp.now(), // Waktu pengajuan izin
+        'timestamp': Timestamp.now(), 
+        'type': 'izin',
       };
 
       // Mulai transaksi untuk memastikan data diperbarui dengan aman

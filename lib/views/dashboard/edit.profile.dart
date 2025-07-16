@@ -4,7 +4,6 @@ import 'package:absensimagang/utils/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:dio/dio.dart';
 import '../../controller/dashboard.controller.dart';
 
 class EditProfilePage extends StatefulWidget {

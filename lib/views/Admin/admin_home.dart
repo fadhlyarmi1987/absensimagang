@@ -201,8 +201,6 @@ class AdminPage extends StatelessWidget {
       // Pastikan checkInTime ada sebelum sorting
       if (checkInTime != null) {
         userAttendances.sort((a, b) {
-          DateTime aCheckIn =
-              a['type'] == 'check-in' ? a['timestamp'] : DateTime(0);
           DateTime bCheckIn =
               b['type'] == 'check-in' ? b['timestamp'] : DateTime(0);
           return bCheckIn.compareTo(bCheckIn); // Descending order

@@ -3,10 +3,7 @@ import 'package:absensimagang/utils/storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:dio/dio.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
-import '../utils/api_constants.dart';
 
 class DashboardBinding implements Bindings {
   @override
@@ -25,7 +22,6 @@ class DashboardController extends GetxController {
   var id = ''.obs;
   var listhadir = <Map<String, dynamic>>[].obs;
 
-  final Dio _dio = Dio();
 
   @override
   void onInit() {
@@ -59,7 +55,6 @@ class DashboardController extends GetxController {
           storage.name(name.value);
           storage.email(email.value);
         } else {
-          print('User document does not exist.');
         }
       } else {
         print('No user is currently logged in.');

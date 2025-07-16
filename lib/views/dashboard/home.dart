@@ -1,12 +1,8 @@
-import 'package:absensimagang/utils/api_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:absensimagang/utils/time_utils.dart';
-import 'package:timezone/timezone.dart' as tz;
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 import '../maps/maps.view.dart';
 import '../../controller/dashboard.controller.dart';

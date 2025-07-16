@@ -160,7 +160,7 @@ class _AturLokasiPageState extends State<AturLokasiPage> {
       });
 
       // Menampilkan splash screen setelah menghapus lokasi
-      _showSplashScreen("Titik lokasi berhasil dihapus.");
+      _showSplashScreen("Menghapus titik lokasi.");
     }
   }
 
@@ -170,28 +170,61 @@ class _AturLokasiPageState extends State<AturLokasiPage> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 20),
-              Text(message),
-            ],
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color.fromARGB(255, 235, 6, 6),
+                  Colors.white,
+                ],
+                stops: [0.1, 0.6],
+              ),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: 10),
+                CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  strokeWidth: 4.0,
+                ),
+                SizedBox(height: 24),
+                Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: const Color.fromARGB(255, 64, 64, 64),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: 10),
+              ],
+            ),
           ),
         );
       },
     );
 
-    // Delay beberapa detik, lalu kembali ke halaman utama
     Future.delayed(Duration(seconds: 2), () {
-      Navigator.pop(context); // Menutup splash screen
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(
-      //       builder: (context) =>
-      //           AturLokasiPage()), // Arahkan kembali ke halaman AturLokasiPage
-      // );
+      Navigator.pop(context);
     });
   }
 
@@ -289,9 +322,8 @@ class _AturLokasiPageState extends State<AturLokasiPage> {
                       showAddIcon = true;
                     });
                   },
-                  myLocationEnabled: true, // 👉 Titik biru
-                  myLocationButtonEnabled:
-                      true, // 👉 Tombol bawaan untuk geser ke posisi
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: true,
                   markers: {
                     ...allMarkers,
                     if (selectedLatLng != null)
@@ -368,47 +400,99 @@ class _AturLokasiPageState extends State<AturLokasiPage> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          contentPadding: EdgeInsets.all(16.0),
-          title: Text('Pengaturan Kantor'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Edit nama kantor
-                TextField(
-                  controller: _nameController,
-                  decoration: InputDecoration(
-                    labelText: 'Nama Kantor',
-                    border: OutlineInputBorder(),
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color.fromARGB(255, 235, 6, 6),
+                  Colors.white,
+                ],
+                stops: [0.06, 0.54],
+              ),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Center(
+                    child: Text(
+                      'Pengaturan Kantor',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.white, // judul putih
+                      ),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                // Tombol untuk menyimpan perubahan nama
-                ElevatedButton(
-                  onPressed: () {
-                    String newName = _nameController.text.trim();
-                    if (newName.isNotEmpty) {
-                      _updateKantorName(newName);
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: Text('Simpan Nama Kantor'),
-                ),
-                const SizedBox(height: 16),
-                // Tombol untuk menghapus lokasi
-                ElevatedButton(
-                  onPressed: () {
-                    _deleteLocation();
-                    Navigator.pop(context);
-                    _loadKantorList(); // Refresh dropdown
-                  },
-                  child: Text('Hapus Lokasi'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red, // Tombol merah untuk hapus
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: _nameController,
+                    decoration: InputDecoration(
+                      labelText: 'Nama Kantor',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.blueAccent),
+                      ),
+                      prefixIcon: Icon(Icons.business),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      icon: Icon(Icons.save),
+                      label: Text('Update Nama Kantor'),
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        backgroundColor: Colors.blueAccent,
+                      ),
+                      onPressed: () {
+                        String newName = _nameController.text.trim();
+                        if (newName.isNotEmpty) {
+                          _updateKantorName(newName);
+                          Navigator.pop(context);
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      icon: Icon(Icons.delete_forever),
+                      label: Text('Hapus Lokasi'),
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        backgroundColor: Colors.redAccent,
+                      ),
+                      onPressed: () {
+                        _deleteLocation();
+                        Navigator.pop(context);
+                        _loadKantorList();
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -421,27 +505,87 @@ class _AturLokasiPageState extends State<AturLokasiPage> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          contentPadding: EdgeInsets.all(16.0),
-          title: Text('Tambah Lokasi'),
-          content: Text('Anda akan menambahkan lokasi kantor baru.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Batal'),
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color.fromARGB(255, 235, 6, 6),
+                  Colors.white,
+                ],
+                stops: [0.06, 0.54],
+              ),
+              borderRadius: BorderRadius.circular(16),
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Future.delayed(Duration(milliseconds: 200), () {
-                  _showAddLocationModal();
-                });
-              },
-              child: Text('Tambah Lokasi'),
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Center(
+                  child: Text(
+                    'Tambah Lokasi',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.white, // Warna teks judul
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Anda akan menambahkan lokasi kantor baru.',
+                  style: TextStyle(fontSize: 16, color: Colors.black87),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton.icon(
+                      icon: Icon(Icons.close, color: Colors.white),
+                      label: Text('Batal'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    SizedBox(width: 16),
+                    ElevatedButton.icon(
+                      icon: Icon(Icons.add_location_alt, color: Colors.white),
+                      label: Text('Tambah Lokasi'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueAccent,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Future.delayed(Duration(milliseconds: 200), () {
+                          _showAddLocationModal();
+                        });
+                      },
+                    ),
+                  ],
+                )
+              ],
             ),
-          ],
+          ),
         );
       },
     );
@@ -453,49 +597,91 @@ class _AturLokasiPageState extends State<AturLokasiPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       builder: (context) {
         return Padding(
           padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-              left: 16,
-              right: 16,
-              top: 16),
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            left: 24,
+            right: 24,
+            top: 16,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // drag handle
+              Container(
+                width: 40,
+                height: 4,
+                margin: EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+
+              // title
+              Text(
+                'Tambah Lokasi Baru',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueGrey[800],
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // input field
               TextField(
                 controller: _newNameController,
                 decoration: InputDecoration(
                   labelText: 'Masukkan Nama Lokasi',
-                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.location_on),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () async {
-                  final name = _newNameController.text.trim();
-                  if (name.isNotEmpty && selectedLatLng != null) {
-                    // Simpan ke Firestore dengan nama sebagai ID dokumen
-                    await kantorRef.doc(name).set({
-                      'name': name,
-                      'location': GeoPoint(
-                        selectedLatLng!.latitude,
-                        selectedLatLng!.longitude,
-                      ),
-                    });
+              const SizedBox(height: 20),
 
-                    setState(() {
-                      showAddIcon = false;
-                      _nameController.text = name;
-                      selectedKantorId = name;
-                    });
+              // save button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  icon: Icon(Icons.save),
+                  label: Text('Simpan Lokasi'),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    backgroundColor: Colors.blueAccent,
+                  ),
+                  onPressed: () async {
+                    final name = _newNameController.text.trim();
+                    if (name.isNotEmpty && selectedLatLng != null) {
+                      await kantorRef.doc(name).set({
+                        'name': name,
+                        'location': GeoPoint(
+                          selectedLatLng!.latitude,
+                          selectedLatLng!.longitude,
+                        ),
+                      });
 
-                    Navigator.pop(context);
-                    _loadKantorList(); // Refresh dropdown
-                    _showSplashScreen("Lokasi Berhasil Ditambahkan");
-                  }
-                },
-                child: Text('Simpan Lokasi'),
+                      setState(() {
+                        showAddIcon = false;
+                        _nameController.text = name;
+                        selectedKantorId = name;
+                      });
+
+                      Navigator.pop(context);
+                      _loadKantorList();
+                      _showSplashScreen("Lokasi Berhasil Ditambahkan");
+                    }
+                  },
+                ),
               ),
               const SizedBox(height: 12),
             ],
@@ -512,7 +698,10 @@ class _AturLokasiPageState extends State<AturLokasiPage> {
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Layanan lokasi tidak aktif'), backgroundColor: const Color.fromARGB(255, 244, 22, 6),),
+        SnackBar(
+          content: Text('Layanan lokasi tidak aktif'),
+          backgroundColor: const Color.fromARGB(255, 244, 22, 6),
+        ),
       );
       return;
     }

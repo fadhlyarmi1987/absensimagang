@@ -83,12 +83,18 @@ class _IzinPageState extends State<IzinPage> {
       return;
     }
 
-    /*
-if (!RegExp(r'[a-zA-Z]').hasMatch(keterangan)) {
-  showTopSnackBar('Keterangan harus mengandung huruf', Colors.orange[800]!);
-  return;
-}
-*/
+    // Tolak jika hanya angka saja
+    if (RegExp(r'^\d+$').hasMatch(keterangan)) {
+      showTopSnackBar(
+          'Keterangan tidak boleh hanya angka', Colors.orange[800]!);
+      return;
+    }
+
+    // Minimal harus mengandung huruf
+    if (!RegExp(r'[a-zA-Z]').hasMatch(keterangan)) {
+      showTopSnackBar('Keterangan harus mengandung huruf', Colors.orange[800]!);
+      return;
+    }
 
     try {
       await _firestoreService.ajukanIzin(keterangan);
@@ -101,9 +107,6 @@ if (!RegExp(r'[a-zA-Z]').hasMatch(keterangan)) {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
       body: Stack(
         children: [

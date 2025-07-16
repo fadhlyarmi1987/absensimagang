@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 import '../../utils/time_utils.dart';
@@ -78,8 +77,8 @@ class _AturWaktuState extends State<AturWaktu> {
         color: const Color.fromARGB(
             255, 193, 193, 193), // full background dark grey
         width: double.infinity,
-        height: double.infinity,
-        padding: const EdgeInsets.fromLTRB(16, 80, 16, 50),
+        height: 1000,
+        padding: const EdgeInsets.fromLTRB(16, 70, 16, 10),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,

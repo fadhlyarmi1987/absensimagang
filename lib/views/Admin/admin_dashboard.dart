@@ -1,13 +1,10 @@
 import 'package:absensimagang/controller/admin_controller.dart';
-import 'package:absensimagang/controller/auth.controller.dart';
 import 'package:absensimagang/views/Admin/admin_home.dart';
 import 'package:absensimagang/views/Admin/atur_lokasi.dart';
 import 'package:absensimagang/views/Admin/list_karyawan_page.dart';
 import 'package:absensimagang/views/Admin/aturwaktu_page.dart';
-import 'package:absensimagang/views/dashboard/profile.dart'; 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 
 import '../../controller/dashboard.controller.dart';
 import 'halaman_notifikasi.dart';
@@ -25,15 +22,14 @@ class AdminDashboard extends StatelessWidget {
     final List<Widget> pages = [
       AdminPage(),
       ListKaryawanPage(),
-      SendNotificationPage(), // Halaman kirim notifikasi
-      AturWaktu(), // Placeholder halaman Profil
+      SendNotificationPage(),
+      AturWaktu(), 
       AturLokasiPage(),
 
     ];
 
     return Scaffold(
       body: Obx(() {
-        // Menampilkan halaman sesuai index yang dipilih
         return pages[selectedIndex.value];
       }),
       bottomNavigationBar: Obx(() => BottomNavigationBar(
@@ -60,10 +56,10 @@ class AdminDashboard extends StatelessWidget {
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.map),
-                label: 'Profil',
+                label: 'atur lokasi',
               ),
             ],
-            selectedItemColor: Colors.red.shade700,
+            selectedItemColor: const Color.fromARGB(255, 114, 90, 90),
             unselectedItemColor: Colors.grey,
           )),
     );

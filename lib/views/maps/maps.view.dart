@@ -272,45 +272,71 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-  Future<void> showInvalidTimeDialog(
-      BuildContext context, bool isCheckIn) async {
-    final startTime = isCheckIn
-        ? await TimeUtils.getCheckInStartTime()
-        : await TimeUtils.getCheckOutStartTime();
+  Future<void> showInvalidTimeDialog(BuildContext context, bool isCheckIn) async {
+  final startTime = isCheckIn
+      ? await TimeUtils.getCheckInStartTime()
+      : await TimeUtils.getCheckOutStartTime();
 
-    final endTime = isCheckIn
-        ? await TimeUtils.getCheckInEndTime()
-        : await TimeUtils.getCheckOutEndTime();
+  final endTime = isCheckIn
+      ? await TimeUtils.getCheckInEndTime()
+      : await TimeUtils.getCheckOutEndTime();
 
-    final timeFormat = DateFormat('HH:mm');
-    final message = isCheckIn
-        ? 'Check-In hanya dapat dilakukan antara jam ${timeFormat.format(startTime)} - ${timeFormat.format(endTime)}.'
-        : 'Check-Out hanya dapat dilakukan antara jam ${timeFormat.format(startTime)} - ${timeFormat.format(endTime)}.';
+  final timeFormat = DateFormat('HH:mm');
+  final message = isCheckIn
+      ? 'Check-In hanya dapat dilakukan antara jam ${timeFormat.format(startTime)} - ${timeFormat.format(endTime)}.'
+      : 'Check-Out hanya dapat dilakukan antara jam ${timeFormat.format(startTime)} - ${timeFormat.format(endTime)}.';
 
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Icon(Icons.access_time_filled,
-            color: Colors.redAccent, size: 50),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text("Diluar Waktu yang Diizinkan",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            Text(message, textAlign: TextAlign.center),
-          ],
-        ),
-        actions: [
-          TextButton(
-            child: const Text("OK", style: TextStyle(color: Colors.blue)),
-            onPressed: () => Navigator.pop(context),
+  showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.access_time_filled,
+            color: Colors.redAccent,
+            size: 60,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            "Diluar Waktu yang Diizinkan",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              color: Colors.blueGrey[800],
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            message,
+            style: TextStyle(fontSize: 14, color: Colors.grey[800]),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              child: Text("OK"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueAccent,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: () => Navigator.pop(context),
+            ),
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Future<void> _fetchOfficeData() async {
     officeLocations = await kantorService.getOfficeLocations();

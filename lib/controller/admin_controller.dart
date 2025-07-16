@@ -131,8 +131,7 @@ class AdminController extends GetxController {
       for (var doc in snapshot.docs) {
         String title = doc['title']; // Ambil judul notifikasi
         String body = doc['body']; // Ambil isi notifikasi
-        String token =
-            doc['token']; // Ambil token perangkat yang menerima notifikasi
+// Ambil token perangkat yang menerima notifikasi
 
         print("Admin received notification: $title - $body");
 

@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import '../../lib/utils/api_constants.dart';
 
 void main() {

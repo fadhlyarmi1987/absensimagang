@@ -143,7 +143,8 @@ class AuthController extends GetxController {
 
           // Simpan email dan password setelah login berhasil
           _storage.saveLoginData(
-              controllerEmaillog.text.trim(),);
+            controllerEmaillog.text.trim(),
+          );
 
           showSnackbar(
             'Login Berhasil',
@@ -156,7 +157,10 @@ class AuthController extends GetxController {
 
           _storage.login();
 
-          // Alihkan berdasarkan user_type
+// Tambahkan delay sebelum navigasi
+          await Future.delayed(const Duration(seconds: 2));
+
+// Alihkan berdasarkan user_type
           if (userType == 'karyawan') {
             Get.offAllNamed(Routes.dahsboard);
           } else if (userType == 'admin') {

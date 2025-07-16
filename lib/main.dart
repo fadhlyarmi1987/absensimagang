@@ -22,9 +22,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Natusi Login/Registration',
       locale: Locale('id', 'ID'),
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
       initialRoute: '/Splash',
       getPages: pages,
     );

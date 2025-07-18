@@ -42,17 +42,17 @@ class RegisterPage extends GetView<AuthController> {
 
                   // --- custom text fields with hint ---
                   CustomTextField(
-                    key:  Key('name'),
+                    key: Key('name'),
                     label: 'Nama',
                     controller: controller.controllerNama,
                   ),
                   CustomTextField(
-                    key:  Key('email'),
+                    key: Key('email'),
                     label: 'Email/Username',
                     controller: controller.controllerEmailreg,
                   ),
                   Obx(() => CustomTextField(
-                    key:  Key('password'),
+                        key: Key('password'),
                         label: 'Password',
                         obscureText: !controller.isPasswordVisible.value,
                         controller: controller.controllerPasswordreg,
@@ -69,7 +69,7 @@ class RegisterPage extends GetView<AuthController> {
                         ),
                       )),
                   Obx(() => CustomTextField(
-                    key:  Key('cpassword'),
+                        key: Key('cpassword'),
                         label: 'Confirm Password',
                         obscureText: !controller.isCPasswordVisible.value,
                         controller: controller.controllerCPassword,
@@ -185,6 +185,12 @@ class CustomTextField extends StatelessWidget {
         child: TextField(
           controller: controller,
           obscureText: obscureText,
+          onTap: () {
+            final selection = controller.selection;
+            controller.selection = TextSelection.collapsed(
+              offset: selection.extentOffset,
+            );
+          },
           decoration: InputDecoration(
             hintText: label,
             fillColor: Colors.white,

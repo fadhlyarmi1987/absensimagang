@@ -22,7 +22,6 @@ class DashboardController extends GetxController {
   var id = ''.obs;
   var listhadir = <Map<String, dynamic>>[].obs;
 
-
   @override
   void onInit() {
     super.onInit();
@@ -54,8 +53,7 @@ class DashboardController extends GetxController {
           // Simpan ke local storage (opsional)
           storage.name(name.value);
           storage.email(email.value);
-        } else {
-        }
+        } else {}
       } else {
         print('No user is currently logged in.');
       }
@@ -65,54 +63,69 @@ class DashboardController extends GetxController {
   }
 
   Future<void> fetchAttendance() async {
-  try {
-    final userEmail = FirebaseAuth.instance.currentUser?.email;
+    try {
+      final userEmail = FirebaseAuth.instance.currentUser?.email;
 
-    if (userEmail == null) {
-      throw Exception("Pengguna tidak terdeteksi");
-    }
-
-    // Query data absensi dari subkoleksi absensi sesuai user.email
-    final snapshot = await firestore
-        .collection('users')
-        .doc(userEmail) // Ambil dokumen berdasarkan user.email
-        .collection('absensi') // Subkoleksi absensi
-        .orderBy('timestamp', descending: true) // Urutkan berdasarkan waktu (dari yang terbaru)
-        .get();
-
-    // Map untuk menyimpan data berdasarkan tanggal
-    final Map<String, Map<String, String>> groupedData = {};
-
-    // Proses dokumen dari Firestore
-    for (var doc in snapshot.docs) {
-      final data = doc.data();
-      final timestamp = (data['timestamp'] as Timestamp).toDate();
-      final formattedDate = DateFormat("EEEE, dd MMMM yyyy", "id_ID").format(timestamp);
-      final dateKey = "${formattedDate}";
-
-      // Cek tipe absensi dan simpan di map
-      if (!groupedData.containsKey(dateKey)) {
-        groupedData[dateKey] = {
-          'checkIn': '-',
-          'checkOut': '-',
-          'date': dateKey,
-        };
+      if (userEmail == null) {
+        throw Exception("Pengguna tidak terdeteksi");
       }
 
-      if (data['type'] == 'check-in') {
-        groupedData[dateKey]!['checkIn'] =
-            "${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}";
-      } else if (data['type'] == 'check-out') {
-        groupedData[dateKey]!['checkOut'] =
-            "${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}";
-      }
-    }
+      final snapshot = await firestore
+          .collection('users')
+          .doc(userEmail)
+          .collection('absensi')
+          .orderBy('timestamp', descending: true)
+          .get();
 
-    // Konversi map ke list
-    listhadir.value = groupedData.values.toList();
-  } catch (e) {
-    Get.snackbar('Error', 'Gagal mengambil data absensi: $e');
+      final Map<String, Map<String, String>> groupedData = {};
+
+      for (var doc in snapshot.docs) {
+        final docId = doc.id.toLowerCase();
+
+        if (docId.contains("izin")) {
+          final izinDate =
+              docId.replaceAll("izin ", ""); 
+          final date = DateFormat("dd-MM-yyyy").parse(izinDate);
+          final formattedDate =
+              DateFormat("EEEE, dd MMMM yyyy", "id_ID").format(date);
+
+          groupedData[formattedDate] = {
+            'checkIn': 'Izin',
+            'checkOut': 'Izin',
+            'date': formattedDate,
+            'isIzin': 'true', // tambahkan flag khusus
+          };
+          continue;
+        }
+
+        final data = doc.data();
+        if (data['timestamp'] == null || data['type'] == null) continue;
+
+        final timestamp = (data['timestamp'] as Timestamp).toDate();
+        final formattedDate =
+            DateFormat("EEEE, dd MMMM yyyy", "id_ID").format(timestamp);
+        final dateKey = formattedDate;
+
+        if (!groupedData.containsKey(dateKey)) {
+          groupedData[dateKey] = {
+            'checkIn': '-',
+            'checkOut': '-',
+            'date': dateKey,
+          };
+        }
+
+        if (data['type'] == 'check-in') {
+          groupedData[dateKey]!['checkIn'] =
+              "${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}";
+        } else if (data['type'] == 'check-out') {
+          groupedData[dateKey]!['checkOut'] =
+              "${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}";
+        }
+      }
+
+      listhadir.value = groupedData.values.toList();
+    } catch (e) {
+      Get.snackbar('Error', 'Gagal mengambil data absensi: $e');
+    }
   }
-}
-
 }

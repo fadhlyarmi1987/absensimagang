@@ -44,7 +44,7 @@ class MapController extends GetxController {
       final now = DateTime.now();
       final formattedDate =
           '${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}';
-      final checkInDocId = '$formattedDate-checkin';
+      final checkInDocId = '17-07-2025-checkin';
 
       final absensiRef = firestore
           .collection('users')
@@ -92,7 +92,7 @@ class MapController extends GetxController {
       final now = DateTime.now();
       final formattedDate =
           '${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}';
-      final checkOutDocId = '$formattedDate-checkout';
+      final checkOutDocId = '17-07-2025-checkout';
 
       final absensiRef = firestore
           .collection('users')

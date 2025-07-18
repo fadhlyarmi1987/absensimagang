@@ -299,8 +299,9 @@ class HomePage extends GetView<DashboardController> {
                             Expanded(
                               child: Obx(() {
                                 return ListView.builder(
-                                  itemCount: controller
-                                      .listhadir.length, // Update here
+                                  itemCount: controller.listhadir.length > 3
+                                      ? 7
+                                      : controller.listhadir.length,
                                   itemBuilder: (context, index) {
                                     var attendance =
                                         controller.listhadir[index];
@@ -316,54 +317,65 @@ class HomePage extends GetView<DashboardController> {
                                               fontSize: screenHeight * 0.02,
                                             ),
                                           ),
-                                          subtitle: Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Text('Check-In:',
-                                                      style: TextStyle(
-                                                          fontSize:
-                                                              screenHeight *
-                                                                  0.015)),
-                                                  Expanded(
-                                                    child: Container(
-                                                      alignment:
-                                                          Alignment.centerRight,
-                                                      child: Text(
-                                                        '${attendance['checkIn']}',
-                                                        style: TextStyle(
-                                                            fontSize:
-                                                                screenHeight *
-                                                                    0.015),
-                                                      ),
-                                                    ),
+                                          subtitle: attendance['isIzin'] ==
+                                                  'true'
+                                              ? Text(
+                                                  'Izin',
+                                                  style: TextStyle(
+                                                    color: Colors.red,
+                                                    fontSize:
+                                                        screenHeight * 0.018,
+                                                    fontWeight: FontWeight.w600,
                                                   ),
-                                                ],
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Text('Check-Out:',
-                                                      style: TextStyle(
-                                                          fontSize:
-                                                              screenHeight *
-                                                                  0.015)),
-                                                  Expanded(
-                                                    child: Container(
-                                                      alignment:
-                                                          Alignment.centerRight,
-                                                      child: Text(
-                                                        '${attendance['checkOut']}',
-                                                        style: TextStyle(
-                                                            fontSize:
-                                                                screenHeight *
-                                                                    0.015),
-                                                      ),
+                                                )
+                                              : Column(
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Text('Check-In:',
+                                                            style: TextStyle(
+                                                                fontSize:
+                                                                    screenHeight *
+                                                                        0.015)),
+                                                        Expanded(
+                                                          child: Container(
+                                                            alignment: Alignment
+                                                                .centerRight,
+                                                            child: Text(
+                                                              '${attendance['checkIn']}',
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      screenHeight *
+                                                                          0.015),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
+                                                    Row(
+                                                      children: [
+                                                        Text('Check-Out:',
+                                                            style: TextStyle(
+                                                                fontSize:
+                                                                    screenHeight *
+                                                                        0.015)),
+                                                        Expanded(
+                                                          child: Container(
+                                                            alignment: Alignment
+                                                                .centerRight,
+                                                            child: Text(
+                                                              '${attendance['checkOut']}',
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      screenHeight *
+                                                                          0.015),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
                                         ),
                                         const Divider(),
                                       ],

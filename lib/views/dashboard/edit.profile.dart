@@ -225,16 +225,29 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 SizedBox(height: 20),
 
                 // 👉 TOMBOL UBAH PASSWORD
-                GestureDetector(
+                InkWell(
                   onTap: () {
-                    Get.to(() =>
-                        ChangePasswordPage()); // Pastikan halaman ini kamu buat
+                    Get.to(() => ChangePasswordPage());
                   },
-                  child: Text(
-                    'Ingin mengubah password?',
-                    style: TextStyle(
-                      color: Colors.white,
-                      decoration: TextDecoration.underline,
+                  borderRadius: BorderRadius.circular(8),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 12.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.lock_reset, color: Colors.white, size: 20),
+                        SizedBox(width: 6),
+                        Text(
+                          'Ubah Password?',
+                          style: TextStyle(
+                            color: Colors.white,
+                            //decoration: TextDecoration.underline,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -247,46 +260,52 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Widget _buildTextField({
-  required TextEditingController controller,
-  required String label,
-  bool enabled = true,
-}) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: [
-      if (label.isNotEmpty)
-        Padding(
-          padding: const EdgeInsets.only(bottom: 6),
-          child: Text(
-            label,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-              color: Colors.white,
+    required TextEditingController controller,
+    required String label,
+    bool enabled = true,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        if (label.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 6),
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
+          ),
+        TextField(
+          controller: controller,
+          enabled: enabled,
+          onTap: () {
+            final selection = controller.selection;
+            controller.selection = TextSelection.collapsed(
+              offset: selection.extentOffset,
+            );
+          },
+          style: TextStyle(color: enabled ? Colors.black : Colors.grey),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: enabled ? Colors.white : Colors.grey.shade300,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: Colors.blueAccent),
+            ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           ),
         ),
-      TextField(
-        controller: controller,
-        enabled: enabled,
-        style: TextStyle(color: enabled ? Colors.black : Colors.grey),
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: enabled ? Colors.white : Colors.grey.shade300,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: Colors.blueAccent),
-          ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        ),
-      ),
-    ],
-  );
-}
-
+      ],
+    );
+  }
 }

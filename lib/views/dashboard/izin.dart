@@ -2,6 +2,7 @@ import 'package:absensimagang/controller/izincontroller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
 
 class IzinPage extends StatefulWidget {
   const IzinPage({super.key});
@@ -21,40 +22,66 @@ class _IzinPageState extends State<IzinPage> {
     _getCurrentIzin();
   }
 
-  void showTopSnackBar(String message, Color backgroundColor) {
-    final overlay = Overlay.of(context);
-    final overlayEntry = OverlayEntry(
-      builder: (context) => Positioned(
-        top: MediaQuery.of(context).padding.top + 20,
-        left: 20,
-        right: 20,
-        child: Material(
-          color: Colors.transparent,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: backgroundColor,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 6,
-                  offset: Offset(0, 3),
-                )
-              ],
-            ),
-            child: Text(
-              message,
-              style: const TextStyle(color: Colors.white, fontSize: 14),
-              textAlign: TextAlign.center,
-            ),
+  void showDialogMessage(
+    BuildContext context,
+    String title,
+    String message, {
+    Color backgroundColor = Colors.red,
+    IconData icon = Icons.close_rounded,
+  }) {
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        backgroundColor: backgroundColor,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, color: Colors.white, size: 60),
+              const SizedBox(height: 16),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                message,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.white70,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Get.back(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: backgroundColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Text(
+                    'OK',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
+      barrierDismissible: false,
     );
-
-    overlay.insert(overlayEntry);
-    Future.delayed(const Duration(seconds: 2), () => overlayEntry.remove());
   }
 
   Future<void> _getCurrentIzin() async {
@@ -71,7 +98,7 @@ class _IzinPageState extends State<IzinPage> {
         });
       }
     } catch (e) {
-      showTopSnackBar('Gagal memuat data izin: $e', Colors.red[800]!);
+      showDialogMessage(context, 'Gagal memuat data izin: $e', '');
     }
   }
 
@@ -79,30 +106,39 @@ class _IzinPageState extends State<IzinPage> {
     final keterangan = _keteranganController.text.trim();
 
     if (keterangan.isEmpty) {
-      showTopSnackBar('Keterangan tidak boleh kosong', Colors.orange[800]!);
+      showDialogMessage(context, 'Peringatan', 'Keterangan tidak boleh kosong');
       return;
     }
 
-    // Tolak jika hanya angka saja
-    if (RegExp(r'^\d+$').hasMatch(keterangan)) {
-      showTopSnackBar(
-          'Keterangan tidak boleh hanya angka', Colors.orange[800]!);
-      return;
-    }
-
-    // Minimal harus mengandung huruf
     if (!RegExp(r'[a-zA-Z]').hasMatch(keterangan)) {
-      showTopSnackBar('Keterangan harus mengandung huruf', Colors.orange[800]!);
+      showDialogMessage(
+          context, 'Peringatan', 'Keterangan harus mengandung huruf');
       return;
     }
 
-    try {
-      await _firestoreService.ajukanIzin(keterangan);
-      await _getCurrentIzin();
-      _keteranganController.clear();
-    } catch (e) {
-      showTopSnackBar('Tidak bisa izin lagi, Izin Anda 0', Colors.red[800]!);
-    }
+    await _firestoreService.ajukanIzin(
+      keterangan,
+      onSuccess: () {
+        showDialogMessage(
+          context,
+          'BERHASIL!',
+          'Izin berhasil diajukan',
+          backgroundColor: Colors.green,
+          icon: Icons.check_circle_outline_rounded,
+        );
+        _getCurrentIzin();
+        _keteranganController.clear();
+      },
+      onError: (error) {
+        showDialogMessage(
+          context,
+          'Gagal',
+          error,
+          backgroundColor: Colors.red,
+          icon: Icons.close_rounded,
+        );
+      },
+    );
   }
 
   @override
@@ -176,6 +212,14 @@ class _IzinPageState extends State<IzinPage> {
                               TextField(
                                 controller: _keteranganController,
                                 maxLines: 5,
+                                onTap: () {
+                                  final selection =
+                                      _keteranganController.selection;
+                                  _keteranganController.selection =
+                                      TextSelection.collapsed(
+                                    offset: selection.extentOffset,
+                                  );
+                                },
                                 decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
                                   hintText: 'Tuliskan keterangan izin Anda...',
